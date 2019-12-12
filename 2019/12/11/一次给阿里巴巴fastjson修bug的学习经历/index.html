@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<script   src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/180180.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/3232.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/1616.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|small:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://yoursite.com').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="一次给阿里巴巴fastjson修bug的学习经历 fastjson也是我最近有用到的一个开源库 这是我在B站学习到的，下面附上视频链接  视频链接">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一次给阿里巴巴fastjson修bug的学习经历">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;11&#x2F;%E4%B8%80%E6%AC%A1%E7%BB%99%E9%98%BF%E9%87%8C%E5%B7%B4%E5%B7%B4fastjson%E4%BF%AEbug%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%BB%8F%E5%8E%86&#x2F;index.html">
+<meta property="og:site_name" content="Welcome to bluepyang&#39;s blog">
+<meta property="og:description" content="一次给阿里巴巴fastjson修bug的学习经历 fastjson也是我最近有用到的一个开源库 这是我在B站学习到的，下面附上视频链接  视频链接">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;revertto10_29.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;gitreset.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;illegal%20jump.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;more%20error%20info.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;duandiantiaoshi.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;code.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;evaluate%20expression.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;evaluate-writefile.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;badclassloca.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;fanbianyibad.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;badclass.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;classpybadclass.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;errorInfoLocaInJDK.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;changeJDK.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;errorInJDK.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;bytecode_50.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;ifeq.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;errorloca.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;asmInterf.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;asmImpl.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;changeCode.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;annotation.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;asmplugin.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;JavaBytecode.png">
+<meta property="article:published_time" content="2019-12-11T10:23:11.000Z">
+<meta property="article:modified_time" content="2019-12-11T11:31:37.629Z">
+<meta property="article:author" content="bluepyang">
+<meta property="article:tag" content="GitHub">
+<meta property="article:tag" content="LearnJava">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;q2cgswswp.bkt.clouddn.com&#x2F;blog&#x2F;imgs&#x2F;revertto10_29.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/11/%E4%B8%80%E6%AC%A1%E7%BB%99%E9%98%BF%E9%87%8C%E5%B7%B4%E5%B7%B4fastjson%E4%BF%AEbug%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%BB%8F%E5%8E%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>一次给阿里巴巴fastjson修bug的学习经历 | Welcome to bluepyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Welcome to bluepyang's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">🐏🐉🐉</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/11/%E4%B8%80%E6%AC%A1%E7%BB%99%E9%98%BF%E9%87%8C%E5%B7%B4%E5%B7%B4fastjson%E4%BF%AEbug%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%BB%8F%E5%8E%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="bluepyang">
+      <meta itemprop="description" content="愿你我眼中所见，皆是笑容🙂">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to bluepyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          一次给阿里巴巴fastjson修bug的学习经历
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-12-11 18:23:11 / 修改时间：19:31:37" itemprop="dateCreated datePublished" datetime="2019-12-11T18:23:11+08:00">2019-12-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/LearnJava/" itemprop="url" rel="index">
+                    <span itemprop="name">LearnJava</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/12/11/%E4%B8%80%E6%AC%A1%E7%BB%99%E9%98%BF%E9%87%8C%E5%B7%B4%E5%B7%B4fastjson%E4%BF%AEbug%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%BB%8F%E5%8E%86/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/12/11/%E4%B8%80%E6%AC%A1%E7%BB%99%E9%98%BF%E9%87%8C%E5%B7%B4%E5%B7%B4fastjson%E4%BF%AEbug%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%BB%8F%E5%8E%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="一次给阿里巴巴fastjson修bug的学习经历"><a href="#一次给阿里巴巴fastjson修bug的学习经历" class="headerlink" title="一次给阿里巴巴fastjson修bug的学习经历"></a>一次给阿里巴巴fastjson修bug的学习经历</h1><blockquote>
+<p>fastjson也是我最近有用到的一个开源库</p>
+<p>这是我在B站学习到的，下面附上视频链接</p>
+</blockquote>
+<p><a href="https://www.bilibili.com/video/av77302131" target="_blank" rel="noopener">视频链接</a></p>
+<a id="more"></a>
+
+<h4 id="找bug标准"><a href="#找bug标准" class="headerlink" title="找bug标准"></a>找bug标准</h4><ol>
+<li>bug能复现</li>
+<li>bug比较重要，也就是说很多人都出现过这个bug</li>
+</ol>
+<h4 id="找到bug"><a href="#找到bug" class="headerlink" title="找到bug"></a>找到bug</h4><p>找到的bug：fastjson无法反序列化超出某种限制的类#2779  下面有bug链接</p>
+<p><a href="https://github.com/alibaba/fastjson/issues/2779" target="_blank" rel="noopener">bug链接</a></p>
+<p>首先使用git clone fastjson项目，在idea中打开</p>
+<p>进入test包，发现java.alibaba.fastjson.deserializer包下已经有issue2779的测试类了</p>
+<p>当然，这是up主已经修复的版本啦，我们运行发现并没有报错，哈哈哈</p>
+<h4 id="复现bug"><a href="#复现bug" class="headerlink" title="复现bug"></a>复现bug</h4><p>所以我们使用git回退到up主还没修复成功的版本</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/revertto10_29.png" alt="image-20191211113613380"></p>
+<p>他是11.4修复的，我们回退到下面的10.29</p>
+<p>在此之前，我们可以先把issue2779包里面的两个文件在本地进行修改一下（按回车增加一行就可以），以免回退的时候这个包直接消失了</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/gitreset.png" alt=""></p>
+<p>上图选错了，应该选择Keep→Reset</p>
+<p>看后面的信息就可以知道，选择keep本地修改的文件（也就是刚才修改的issue2779包内的两个文件）会保存下来了，如果选hard就直接暴力删除啦</p>
+<p>之后运行issue2779测试类，终于出现了报错信息</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/illegal%20jump.png" alt="image-20191211115200184"></p>
+<p>然后找这种jdk和这个项目报错信息的交界处</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/more%20error%20info.png" alt="image-20191211115622717"></p>
+<p>也就是com.alibaba.fastjson.parser.deserializer包下面的ASMDeserializerFactory类的createJavaBeanDeserializer方法有问题</p>
+<h4 id="查找问题"><a href="#查找问题" class="headerlink" title="查找问题"></a>查找问题</h4><p>我们定位到这一行，进行断点调试</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/duandiantiaoshi.png" alt="image-20191211115948426"></p>
+<p>查看code变量</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/code.png" alt="image-20191202230532915"></p>
+<blockquote>
+<p>code是一个Java字节码 </p>
+<p>所有的.class 文件的前四个字节都是魔数，魔数的固定值为：0xCAFEBABE</p>
+<p>Java有咖啡的意思，程序员的浪漫~</p>
+<p>魔数的固定值是 Java 之父 James Gosling 制定的，为 CafeBabe（咖啡宝贝），而 Java 的图标为一杯咖啡</p>
+</blockquote>
+<h5 id="Evaluate-Expression表达式求值"><a href="#Evaluate-Expression表达式求值" class="headerlink" title="Evaluate Expression表达式求值"></a>Evaluate Expression表达式求值</h5><p>在code处右键有个Evaluate Expression，表达式求值</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/evaluate%20expression.png" alt="image-20191202230841162"></p>
+<p>将字节码输出到文件bad.class</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/evaluate-writefile.png" alt="image-20191202231109760"></p>
+<p>可以看到项目这里出现了bad.class文件</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/badclassloca.png" alt="image-20191211120602606"></p>
+<p>很奇怪，我这里idea居然还是可以反编译成功</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/fanbianyibad.png" alt="image-20191211120750776"></p>
+<p>如果是坏的，idea无法反编译，会出现下面的结果，视频中是这样的</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/badclass.png" alt="image-20191202234253689"></p>
+<p>我们可以用一些工具来查看这个坏的字节码文件</p>
+<p>例如下面的命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javap -v bad #Java自带的反编译工具</span><br></pre></td></tr></table></figure>
+
+<p>但是太长了，在命令行看也不太方便</p>
+<p>我们使用下面的工具classpy</p>
+<h5 id="反编译工具classpy"><a href="#反编译工具classpy" class="headerlink" title="反编译工具classpy"></a>反编译工具classpy</h5><p>在GitHub搜索classpy，clone下来，按照readme安装运行</p>
+<p>我是Windows系统，首先进入classpy目录下，点击运行了gradlew.bat文件，然后在当前目录下的命令行输入下面的命令启动这个工具</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gradle run</span><br></pre></td></tr></table></figure>
+
+
+
+<p>视频中他的Java版本为11，启动失败了</p>
+<p>使用了jenv命令切换到jdk1.8，我使用的就是jdk1.8  忽略这个步骤</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jenv shell 1.8  #需要安装jenv</span><br></pre></td></tr></table></figure>
+
+
+
+<p>下面是打开的字节码文件</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/classpybadclass.png" alt="image-20191203001137874"></p>
+<p>由于我们只有Illegal target of jump or branch这个报错信息，这一个线索</p>
+<blockquote>
+<p>下面buildjdk操作太硬核，我没有跟着做😂  感兴趣可以去视频16:45处看看👍</p>
+</blockquote>
+<p>到jdk中寻找此报错信息</p>
+<p>clone openjdk下的jdk项目，全局搜索此报错信息Illegal target of jump or branch </p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/errorInfoLocaInJDK.png" alt="Illegal target of jump or branch 报错信息"></p>
+<p> 然后他修改了jdk，上面图片中的代码就是修改后的jdk，原来只有报错信息，他自己加上了jump和target，可以提示错误的位置，如下图</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/changeJDK.png" alt="image-20191211131058621"></p>
+<p>然后他自己build了一个jdk👍</p>
+<p>使用自己build的jdk重新运行issue2779，下面是报错信息，deserialze方法第50位置</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/errorInJDK.png" alt="image-20191211131737775"></p>
+<p>在刚才classpy打开的bad.class中找到deserialze方法  字节码  第50个位置是这样的</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/bytecode_50.png" alt="image-20191211124952950"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifeq -32405</span><br></pre></td></tr></table></figure>
+
+<p>可能是溢出</p>
+<p>查看ifeq的含义，当栈顶int型数值等于0时跳转</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/ifeq.png" alt="image-20191211132443946"></p>
+<p>fastjson有个地方代码没有写好，生成了一个会溢出的跳转指令</p>
+<p>然后根据上下文(50位置上面有个isEnabled)，在源码中找到相应位置</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/errorloca.png" alt="image-20191211125555537"></p>
+<p>进入visitJumpInsn方法，这其实是asm代码（操作字节码的库）</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/asmInterf.png" alt="image-20191211133402454"></p>
+<p>按crtl+alt+B可以进入接口的实现类</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/asmImpl.png" alt="image-20191211133434998"></p>
+<h4 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h4><p>然后他觉得，可能是fastjson里面的asm代码版本太老了，想把最新的合并进来，但是由于版本相差7年，失败了</p>
+<p>对比最新的asm代码与fastjson里面的代码</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/changeCode.png" alt="image-20191211133753383"></p>
+<p>这里非常重要，如果越界，可以将IFxxx改为IFNOTxxx  GOTO_W</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/annotation.png" alt="image-20191211175328263"></p>
+<p>最后解决的问题：按照asm的要求，把一个不支持长跳转的ifeq转变成ifnq加goto_w长跳转语句</p>
+<p><a href="https://github.com/alibaba/fastjson/pull/2858" target="_blank" rel="noopener">pr链接</a></p>
+<p>修完bug一定要补一个测试用例！</p>
+<h4 id="视频中提到其他内容"><a href="#视频中提到其他内容" class="headerlink" title="视频中提到其他内容"></a>视频中提到其他内容</h4><h5 id="字节码的解释："><a href="#字节码的解释：" class="headerlink" title="字节码的解释："></a>字节码的解释：</h5><p>简单写一个测试一下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AbcDTO</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String [] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i =<span class="number">1</span>,j=<span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (i+j==<span class="number">3</span>)&#123;</span><br><span class="line">            System.out.println(<span class="string">"3"</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">"0"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>编译运行，使用ASM Bytecode Viewer插件查看字节码</p>
+<h5 id="ASM-Bytecode-Viewer插件"><a href="#ASM-Bytecode-Viewer插件" class="headerlink" title="ASM Bytecode Viewer插件"></a>ASM Bytecode Viewer插件</h5><p>可在idea Plugins中安装</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/asmplugin.png" alt="image-20191208144452139"></p>
+<p>找到main方法</p>
+<p><img src="http://q2cgswswp.bkt.clouddn.com/blog/imgs/JavaBytecode.png" alt="image-20191208144825554"></p>
+<p>每个方法里面有个操作数栈，jvm执行方法时会不停的执行这些指令</p>
+<h5 id="修bug要掌握的东西"><a href="#修bug要掌握的东西" class="headerlink" title="修bug要掌握的东西"></a>修bug要掌握的东西</h5><ol>
+<li>能从用户提供的bug，重现bug</li>
+<li>看栈轨迹，字节码问题出在哪里</li>
+<li>学习使用反编译工具</li>
+<li>错误信息到底是什么问题，读jdk源码（甚至需要build jdk）</li>
+</ol>
+<p>R大的书单RednaxelaFX</p>
+<p>下·</p>
+<h5 id="mybatis需要掌握的内容"><a href="#mybatis需要掌握的内容" class="headerlink" title="mybatis需要掌握的内容"></a>mybatis需要掌握的内容</h5><ol>
+<li>#{} ${}</li>
+<li>缓存是咋实现的？</li>
+<li>Executor是啥？</li>
+<li>分页是怎么实现的？</li>
+</ol>
+<h4 id="总结一下看这个视频了解到的内容"><a href="#总结一下看这个视频了解到的内容" class="headerlink" title="总结一下看这个视频了解到的内容"></a>总结一下看这个视频了解到的内容</h4><ul>
+<li><p>Java字节码的magic number  Cofe Babe</p>
+</li>
+<li><p>idea的表达式计算Evaluate Expression</p>
+</li>
+<li><p>学习使用反编译工具javap -v 、classpy</p>
+</li>
+<li><p>ASM Bytecode Viewer插件查看字节码</p>
+</li>
+<li><p>话说我才刚知道idea中快捷键CTRL+Alt+B可以从接口跳转到实现类😂然后Ctrl+U是实现类到接口🤣</p>
+</li>
+<li><p>GitHub中的issue以及pull request</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/GitHub/" rel="tag"># GitHub</a>
+              <a href="/tags/LearnJava/" rel="tag"># LearnJava</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/11/25/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C3-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/" rel="prev" title="操作系统实验3 存储管理">
+      <i class="fa fa-chevron-left"></i> 操作系统实验3 存储管理
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一次给阿里巴巴fastjson修bug的学习经历"><span class="nav-number">1.</span> <span class="nav-text">一次给阿里巴巴fastjson修bug的学习经历</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#找bug标准"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">找bug标准</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#找到bug"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">找到bug</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#复现bug"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">复现bug</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查找问题"><span class="nav-number">1.0.0.4.</span> <span class="nav-text">查找问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Evaluate-Expression表达式求值"><span class="nav-number">1.0.0.4.1.</span> <span class="nav-text">Evaluate Expression表达式求值</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#反编译工具classpy"><span class="nav-number">1.0.0.4.2.</span> <span class="nav-text">反编译工具classpy</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解决问题"><span class="nav-number">1.0.0.5.</span> <span class="nav-text">解决问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#视频中提到其他内容"><span class="nav-number">1.0.0.6.</span> <span class="nav-text">视频中提到其他内容</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#字节码的解释："><span class="nav-number">1.0.0.6.1.</span> <span class="nav-text">字节码的解释：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ASM-Bytecode-Viewer插件"><span class="nav-number">1.0.0.6.2.</span> <span class="nav-text">ASM Bytecode Viewer插件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#修bug要掌握的东西"><span class="nav-number">1.0.0.6.3.</span> <span class="nav-text">修bug要掌握的东西</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#mybatis需要掌握的内容"><span class="nav-number">1.0.0.6.4.</span> <span class="nav-text">mybatis需要掌握的内容</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结一下看这个视频了解到的内容"><span class="nav-number">1.0.0.7.</span> <span class="nav-text">总结一下看这个视频了解到的内容</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="bluepyang"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">bluepyang</p>
+  <div class="site-description" itemprop="description">愿你我眼中所见，皆是笑容🙂</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/BluePrintYang" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;BluePrintYang" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/yll1671158@163.com" title="E-Mail → yll1671158@163.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/bluepyang" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;bluepyang" rel="noopener" target="_blank"><i class="fa fa-fw fa-crosshairs"></i>CSDN</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://notlxb.top/" title="http:&#x2F;&#x2F;notlxb.top&#x2F;" rel="noopener" target="_blank">notlxb</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.yunot.top/" title="http:&#x2F;&#x2F;www.yunot.top&#x2F;" rel="noopener" target="_blank">yunot</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">bluepyang</span>
+</div>
+
+ <!--
+
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.1.1
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.6.0
+  </div>
+ -->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el: '#valine-comments',
+      verify: false,
+      notify: false,
+      appId: 'JAP6dLlG1t54MUsbc4smdek0-gzGzoHsz',
+      appKey: '4qpdy8FSPq8E61ULyXUpf9dP',
+      placeholder: "这里可以留下你的足迹~",
+      avatar: 'mm',
+      meta: guest,
+      pageSize: '10' || 10,
+      visitor: false,
+      lang: '' || 'zh-cn',
+      path: location.pathname,
+      recordIP: false,
+      serverURLs: ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+<!-- 页面点击小红心 -->
+<script type="text/javascript"   src="/js/src/love.js"></script>
+<!-- 背景动画 -->
+<script type="text/javascript"   src="/js/src/particle.js"></script>
+</html>

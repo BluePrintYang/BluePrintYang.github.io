@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<script   src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/180180.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/3232.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/1616.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|small:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://yoursite.com').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="实验目的理解操作系统存储管理原理  操作系统的发展使得系统完成了大部分的内存管理工作。对于程序员而言，这些内存管理的过程完全透明不可见。因此，程序员开发时从不关心系统如何为自己分配内存，而且永远认为系统可以分配给程序所需要的内存。在程序开发时，程序员真正需要做的就是：申请内存、使用内存、释放内存，其他一概无需过问。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="操作系统实验3 存储管理">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;25&#x2F;%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C3-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86&#x2F;index.html">
+<meta property="og:site_name" content="Welcome to bluepyang&#39;s blog">
+<meta property="og:description" content="实验目的理解操作系统存储管理原理  操作系统的发展使得系统完成了大部分的内存管理工作。对于程序员而言，这些内存管理的过程完全透明不可见。因此，程序员开发时从不关心系统如何为自己分配内存，而且永远认为系统可以分配给程序所需要的内存。在程序开发时，程序员真正需要做的就是：申请内存、使用内存、释放内存，其他一概无需过问。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-11-25T14:32:32.000Z">
+<meta property="article:modified_time" content="2019-11-25T14:45:30.291Z">
+<meta property="article:author" content="bluepyang">
+<meta property="article:tag" content="操作系统">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/11/25/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C3-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>操作系统实验3 存储管理 | Welcome to bluepyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Welcome to bluepyang's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">🐏🐉🐉</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/25/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C3-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="bluepyang">
+      <meta itemprop="description" content="愿你我眼中所见，皆是笑容🙂">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to bluepyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          操作系统实验3 存储管理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-11-25 22:32:32 / 修改时间：22:45:30" itemprop="dateCreated datePublished" datetime="2019-11-25T22:32:32+08:00">2019-11-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/" itemprop="url" rel="index">
+                    <span itemprop="name">实验报告</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/11/25/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C3-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/11/25/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C3-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="实验目的"><a href="#实验目的" class="headerlink" title="实验目的"></a>实验目的</h4><p>理解操作系统存储管理原理</p>
+<blockquote>
+<p>操作系统的发展使得系统完成了大部分的内存管理工作。对于程序员而言，这些内存管理的过程完全透明不可见。因此，程序员开发时从不关心系统如何为自己分配内存，而且永远认为系统可以分配给程序所需要的内存。在程序开发时，程序员真正需要做的就是：申请内存、使用内存、释放内存，其他一概无需过问。</p>
+</blockquote>
+<a id="more"></a>
+
+<h4 id="程序1"><a href="#程序1" class="headerlink" title="程序1"></a>程序1</h4><p>申请内存、使用内存以及释放一块内存 </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//B17040417.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;malloc.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">char</span> * str;</span><br><span class="line"><span class="keyword">if</span> ((str=(<span class="keyword">char</span>*)<span class="built_in">malloc</span>(<span class="number">10</span>))==<span class="literal">NULL</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"not enough memory to allocate buffer\\n"</span>);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">strcpy</span>(str,<span class="string">"hello"</span>);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"string is %s\n"</span>,str);</span><br><span class="line"><span class="built_in">free</span>(str);</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="程序2"><a href="#程序2" class="headerlink" title="程序2"></a>程序2</h4><p>在打开文件后，通过fstat()获得文件长度，然后通过malloc()系统调用申请响应大小的内存空间，通过read()将文件内容完全读入该内存空间，并显示出来。  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//yanglonglong.c(路径: /opt/yanglonglong.c)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;malloc.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line">main()</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">int</span> fd,len;</span><br><span class="line">  <span class="keyword">void</span> *tp;<span class="comment">//void *则为“无类型指针”，可以指向任何数据类型</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">stat</span> <span class="title">ps</span>;</span></span><br><span class="line">  fd=<span class="built_in">open</span>(<span class="string">"/opt/yanglonglong.c"</span>,<span class="number">0</span>);</span><br><span class="line">  fstat(fd,&amp;ps);</span><br><span class="line">  len=ps.st_size;</span><br><span class="line">  tp=<span class="built_in">malloc</span>(len);</span><br><span class="line">  <span class="built_in">read</span>(fd,tp,len);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"%s\n"</span>,tp);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"size:%d bytes\n"</span>,len);</span><br><span class="line">  <span class="built_in">close</span>(fd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h4 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h4><h5 id="相关函数"><a href="#相关函数" class="headerlink" title="相关函数"></a>相关函数</h5><h6 id="1）内存动态分配函数"><a href="#1）内存动态分配函数" class="headerlink" title="1）内存动态分配函数"></a>1）内存动态分配函数</h6><p>#include &lt;malloc.h&gt; </p>
+<p>void *malloc(size_t size) </p>
+<p>该函数分配指定大小size个字节的内存空间，成功时返回分配内存的指针（即所分配内存的地址）。该内存区域没有清空。 </p>
+<h6 id="2）-void-free-void-addr"><a href="#2）-void-free-void-addr" class="headerlink" title="2） void free(void * addr);"></a>2） void free(void * addr);</h6><p>该函数释放由malloc()分配的内存，addr是要释放内存空间的起始地址，并且addr必须是被以前malloc( )调用返回的。 </p>
+<h5 id="malloc的使用方法及注意事项"><a href="#malloc的使用方法及注意事项" class="headerlink" title="malloc的使用方法及注意事项"></a>malloc的使用方法及注意事项</h5><p>使用C语言进行开发的时候,内存管理非常重要,如果内存管理不当,会导致内存泄露,程序无故死机,<br>在C语言中内存管理中,需要使用malloc()和free()两个函数</p>
+<h6 id="1-为什么要使用malloc和free"><a href="#1-为什么要使用malloc和free" class="headerlink" title="1 为什么要使用malloc和free ?"></a>1 为什么要使用malloc和free ?</h6><p>使用malloc,free可以动态的分配内存和动态释放内存,节约应用程序的运行时,所占用的内存空间,以上也是malloc的优点。</p>
+<h6 id="2-malloc和指针的关系"><a href="#2-malloc和指针的关系" class="headerlink" title="2 malloc和指针的关系?"></a>2 malloc和指针的关系?</h6><p>void p= *malloc(long num)：该函数分配了num个字节,并返回了指向这块内存的指针。如果分配失败，则返回一个空指针（NULL）。<br>关于分配失败的原因，应该有多种，比如说空间不足就是一种。<br>void free(p)： 该函数是将之前用malloc分配的空间还给程序或者是操作系统，也就是释放了这块内存,让这块内存重新交给操作系统管理。<br>综上所述：因为malloc分配成功后返回内存的首地址，在使用中是按地址来进行调用，所以有malloc分配内存的时候，就有指针存在。</p>
+<h6 id="3-一般什么情况下需要用到malloc"><a href="#3-一般什么情况下需要用到malloc" class="headerlink" title="3 一般什么情况下需要用到malloc ?"></a>3 一般什么情况下需要用到malloc ?</h6><p>在程序运行的时候，可变的array,struct可以用到malloc分配内存，也可以采用分配一个连续的空间 存储一批相同类型的变量。</p>
+<h6 id="4-malloc的用法"><a href="#4-malloc的用法" class="headerlink" title="4 malloc的用法"></a>4 malloc的用法</h6><p>程序代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> *p = <span class="literal">NULL</span>;</span><br><span class="line">p= (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(<span class="number">100</span> * <span class="keyword">sizeof</span>(<span class="keyword">char</span>)); <span class="comment">//分配100个字符串</span></span><br><span class="line"><span class="keyword">if</span> (<span class="literal">NULL</span> == p) <span class="comment">//检测malloc是否分配成功</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="built_in">exit</span> (<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//使用分配空间</span></span><br><span class="line"><span class="built_in">free</span>(p); <span class="comment">//释放空间</span></span><br><span class="line">p= <span class="literal">NULL</span>; <span class="comment">//指针释放</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="5-malloc使用注意事项"><a href="#5-malloc使用注意事项" class="headerlink" title="5 malloc使用注意事项"></a>5 malloc使用注意事项</h6><ol>
+<li>malloc内存空间后,需要检查是否分配成功!</li>
+<li>使用完毕后需要释放内存空间，释放后应该把指向这块内存的指针指向NULL,避免再次使用时，出现奇怪的错误现象。</li>
+<li>malloc内存后，不释放会产生内存泄露，多次使用free释放会导致程序报错。</li>
+<li>malloc内存时候，需要对返回的指针类型做强制转换。</li>
+</ol>
+<h5 id="read函数"><a href="#read函数" class="headerlink" title="read函数"></a>read函数</h5><p>用read函数读取数组中的元素：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> buf[<span class="number">200</span>];</span><br><span class="line"><span class="built_in">read</span>(<span class="number">0</span>, buf, <span class="number">5</span>);</span><br></pre></td></tr></table></figure>
+
+<p>第一个参数说明的是从0开始读取<br>第二个参数是：要读取的数组buf<br>第三个参数是：要读5个</p>
+<p>总结：从第0个开始读取buf中的5个元素（连续的）</p>
+<h5 id="fstat"><a href="#fstat" class="headerlink" title="fstat"></a>fstat</h5><p>功能：<br>获得文件或共享内存区的信息<br>头文件：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt; </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt; </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntk.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>函数原形：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">stat</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *file_name,struct stat *buf)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>参数：<br>file_name          文件名<br>buf                     stat结构<br>返回值：<br>成功返回0，出错返回-1<br>对于普通文件stat结构可以获得12个以上的成员信息，然而当fd指代一个共享内存区对象时，只有四个成员含有信息。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">stat</span>&#123;</span></span><br><span class="line">	<span class="keyword">mode_t</span> st_mode;</span><br><span class="line">	<span class="keyword">uid_t</span> st_uid;</span><br><span class="line">	<span class="keyword">gid_t</span> st_gid;</span><br><span class="line">	<span class="keyword">off_t</span> st_size;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h5 id="exit-函数"><a href="#exit-函数" class="headerlink" title="exit()函数:"></a>exit()函数:</h5><p>所在头文件：==stdlib.h==<br>功 能: 关闭所有文件，终止正在执行的进程。<br>exit(1)表示异常退出.这个1是返回给操作系统的。<br>exit(x)（x不为0）都表示异常退出<br>exit(0)表示正常退出<br>exit()的参数会被传递给一些操作系统，包括UNIX,Linux,和MS DOS，以供其他程序使用。<br>==stdlib.h==: void exit(int status);<br>参 数 : status //程序退出的返回值.</p>
+<h5 id="exit函数和return函数的主要区别："><a href="#exit函数和return函数的主要区别：" class="headerlink" title="exit函数和return函数的主要区别："></a>exit函数和return函数的主要区别：</h5><p>   1）exit用于在程序运行的过程中随时结束程序，exit的参数是返回给OS的。main函数结束时也会隐式地调用exit函数。exit函数运行时首先会执行由atexit()函数登记的函数，然后会做一些自身的清理工作，同时刷新所有输出流、关闭所有打开的流并且关闭通过标准I/O函数tmpfile()创建的临时文件。exit是结束一个进程，它将删除进程使用的内存空间，同时把错误信息返回父进程,而return是返回函数值并退出函数。通常情况：</p>
+<ul>
+<li><p>exit(0)表示程序正常,</p>
+</li>
+<li><p>exit(1)和exit(-1)表示程序异常退出，exit(2)表示表示系统找不到指定的文件。</p>
+<p>在整个程序中，只要调用exit就结束（当前进程或者在main时候为整个程序）。</p>
+</li>
+</ul>
+<p>   2）return是语言级别的，它表示了调用堆栈的返回；return( )是当前函数返回，当然如果是在主函数main, 自然也就结束当前进程了，如果不是，那就是退回上一层调用。在多个进程时。如果有时要检测上个进程是否正常退出。就要用到上个进程的返回值，依次类推。而exit是系统调用级别的，它表示了一个进程的结束。</p>
+<p>   3）exit函数是退出应用程序，并将应用程序的一个状态返回给OS，这个状态标识了应用程序的一些运行信息。</p>
+<p>   4）和机器和操作系统有关的一般是： 0为正常退出，非0为非正常退出；</p>
+<h5 id="进程环境与进程控制"><a href="#进程环境与进程控制" class="headerlink" title="进程环境与进程控制"></a>进程环境与进程控制</h5><p>​        exit(int n)其实就是直接退出程序，因为默认的标准程序入口为 int main(int argc, char** argv)，返回值是int型的。一般在shell下面，运行一个程序，然后使用命令echo $?就能得到该程序的返回值，也就是退出值，在main()里面，你可以用return n，也能够直接用exit(n)来做。unix默认的正确退出是返回0，错误返回非0。</p>
+<p>理论上exit可以返回小于256的任何整数。返回的不同数值主要是给调用者作不同处理的。</p>
+<p>单独的进程是返回给操作系统的。如果是多进程，是返回给父进程的。父进程里面调用waitpid()等函数得到子进程退出的状态，以便作不同处理。根据相应的返回值来让调用者作出相应的处理.总的说来，exit（）就是当前进程把控制权返回给调用该程序的程序,括号里的是返回值,告诉调用程序该程序的运行状态。</p>
+<h5 id="1）-进程的开始："><a href="#1）-进程的开始：" class="headerlink" title="1） 进程的开始："></a>1） 进程的开始：</h5><p>C程序是从main函数开始执行, 原型如下:int main(int argc, char *argv[]);通常main的返回值是int型, 正确返回0。如果main的返回值为void, 某些编译器会给出警告, 此时main的返回值通常是0。</p>
+<h5 id="2）进程终止："><a href="#2）进程终止：" class="headerlink" title="2）进程终止："></a>2）进程终止：</h5><p>C程序的终止分为两种: 正常终止和异常终止。正常终止分为: return, exit, _exit, _Exit, pthreade_exit。异常中指分为: abort, SIGNAL, 线程响应取消。<br>   主要说一下正常终止的前4种, 即exit系列函数.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;   </span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">exit</span><span class="params">(<span class="keyword">int</span> status)</span></span>;</span><br><span class="line"><span class="keyword">void</span> _Exit(<span class="keyword">int</span> status);</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;   </span></span></span><br><span class="line"><span class="keyword">void</span> _exit(<span class="keyword">int</span> status);</span><br></pre></td></tr></table></figure>
+
+<p>以上3个函数的区别是:exit()(或return 0)会调用终止处理程序和用户空间的标准I/O清理程序(如fclose), <em>exit和</em> Exit不调用而直接由内核接管进行清理。因此, ==在main函数中exit(0)等价于return 0==.</p>
+<h5 id="3）-atexit终止处理程序："><a href="#3）-atexit终止处理程序：" class="headerlink" title="3） atexit终止处理程序："></a>3） atexit终止处理程序：</h5><p>ISO C规定, 一个进程最多可登记32个终止处理函数, 这些函数由exit按登记相反的顺序自动调用。如果同一函数登记多次, 也会被调用多次。<br>   原型如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">atexit</span><span class="params">(<span class="keyword">void</span> (*func)(<span class="keyword">void</span>))</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>其中参数是一个函数指针, 指向终止处理函数, 该函数无参无返回值。atexit函数本身成功调用后返回0。</p>
+<p>以下面的程序为例:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">myexit1</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"first exit handler\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">myexit2</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"second exit handler\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    atexit(my_exit2)；</span><br><span class="line">  atexit(my_exit1)； </span><br><span class="line"></span><br><span class="line">atexit(my_exit1)；</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"main is done\n"</span>);</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>运行结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ .&#x2F;a.out</span><br><span class="line">main is done</span><br><span class="line">first exit handler</span><br><span class="line">first exit handler</span><br><span class="line">second exit handler</span><br></pre></td></tr></table></figure>
+
+<p>注意上面的结果，可以发现这些函数由exit按登记相反的顺序自动调用（先myexit1后myexit2）。如果同一函数登记多次, 也会被调用多次（如这里的myexit1）。而这些处理函数都是在程序退出的时候利用atexit函数调用了这些处理函数。但是如果用_exit()退出程序，则它不关闭任何文件，不清除任何缓冲器、也不调用任何终止函数！</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag"># 操作系统</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/10/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6%E5%A4%8D%E4%B9%A0/" rel="prev" title="计算机图形学复习">
+      <i class="fa fa-chevron-left"></i> 计算机图形学复习
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/12/11/%E4%B8%80%E6%AC%A1%E7%BB%99%E9%98%BF%E9%87%8C%E5%B7%B4%E5%B7%B4fastjson%E4%BF%AEbug%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%BB%8F%E5%8E%86/" rel="next" title="一次给阿里巴巴fastjson修bug的学习经历">
+      一次给阿里巴巴fastjson修bug的学习经历 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#实验目的"><span class="nav-number">1.</span> <span class="nav-text">实验目的</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#程序1"><span class="nav-number">2.</span> <span class="nav-text">程序1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#程序2"><span class="nav-number">3.</span> <span class="nav-text">程序2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#知识点"><span class="nav-number">4.</span> <span class="nav-text">知识点</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#相关函数"><span class="nav-number">4.1.</span> <span class="nav-text">相关函数</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1）内存动态分配函数"><span class="nav-number">4.1.1.</span> <span class="nav-text">1）内存动态分配函数</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2）-void-free-void-addr"><span class="nav-number">4.1.2.</span> <span class="nav-text">2） void free(void * addr);</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#malloc的使用方法及注意事项"><span class="nav-number">4.2.</span> <span class="nav-text">malloc的使用方法及注意事项</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-为什么要使用malloc和free"><span class="nav-number">4.2.1.</span> <span class="nav-text">1 为什么要使用malloc和free ?</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-malloc和指针的关系"><span class="nav-number">4.2.2.</span> <span class="nav-text">2 malloc和指针的关系?</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-一般什么情况下需要用到malloc"><span class="nav-number">4.2.3.</span> <span class="nav-text">3 一般什么情况下需要用到malloc ?</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-malloc的用法"><span class="nav-number">4.2.4.</span> <span class="nav-text">4 malloc的用法</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#5-malloc使用注意事项"><span class="nav-number">4.2.5.</span> <span class="nav-text">5 malloc使用注意事项</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#read函数"><span class="nav-number">4.3.</span> <span class="nav-text">read函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#fstat"><span class="nav-number">4.4.</span> <span class="nav-text">fstat</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#exit-函数"><span class="nav-number">4.5.</span> <span class="nav-text">exit()函数:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#exit函数和return函数的主要区别："><span class="nav-number">4.6.</span> <span class="nav-text">exit函数和return函数的主要区别：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#进程环境与进程控制"><span class="nav-number">4.7.</span> <span class="nav-text">进程环境与进程控制</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1）-进程的开始："><span class="nav-number">4.8.</span> <span class="nav-text">1） 进程的开始：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2）进程终止："><span class="nav-number">4.9.</span> <span class="nav-text">2）进程终止：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3）-atexit终止处理程序："><span class="nav-number">4.10.</span> <span class="nav-text">3） atexit终止处理程序：</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="bluepyang"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">bluepyang</p>
+  <div class="site-description" itemprop="description">愿你我眼中所见，皆是笑容🙂</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/BluePrintYang" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;BluePrintYang" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/yll1671158@163.com" title="E-Mail → yll1671158@163.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/bluepyang" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;bluepyang" rel="noopener" target="_blank"><i class="fa fa-fw fa-crosshairs"></i>CSDN</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://notlxb.top/" title="http:&#x2F;&#x2F;notlxb.top&#x2F;" rel="noopener" target="_blank">notlxb</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.yunot.top/" title="http:&#x2F;&#x2F;www.yunot.top&#x2F;" rel="noopener" target="_blank">yunot</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">bluepyang</span>
+</div>
+
+ <!--
+
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.1.1
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.6.0
+  </div>
+ -->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el: '#valine-comments',
+      verify: false,
+      notify: false,
+      appId: 'JAP6dLlG1t54MUsbc4smdek0-gzGzoHsz',
+      appKey: '4qpdy8FSPq8E61ULyXUpf9dP',
+      placeholder: "这里可以留下你的足迹~",
+      avatar: 'mm',
+      meta: guest,
+      pageSize: '10' || 10,
+      visitor: false,
+      lang: '' || 'zh-cn',
+      path: location.pathname,
+      recordIP: false,
+      serverURLs: ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+<!-- 页面点击小红心 -->
+<script type="text/javascript"   src="/js/src/love.js"></script>
+<!-- 背景动画 -->
+<script type="text/javascript"   src="/js/src/particle.js"></script>
+</html>
