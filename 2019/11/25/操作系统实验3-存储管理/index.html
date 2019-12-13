@@ -12,7 +12,7 @@
 
 <link rel="stylesheet" href="/css/main.css">
 
-<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|Amita:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=EB Garamond:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|Amita:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
 <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
   <script src="/lib/pace/pace.min.js"></script>
@@ -21,12 +21,12 @@
 <script id="hexo-configurations">
   var NexT = window.NexT || {};
   var CONFIG = {
-    hostname: new URL('http://yoursite.com').hostname,
+    hostname: new URL('https://www.yangllong.top').hostname,
     root: '/',
-    scheme: 'Muse',
+    scheme: 'Gemini',
     version: '7.6.0',
     exturl: false,
-    sidebar: {"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},
+    sidebar: {"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},
     copycode: {"enable":true,"show_result":true,"style":"mac"},
     back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
     bookmark: {"enable":false,"color":"#222","save":"auto"},
@@ -51,7 +51,7 @@
   <meta name="description" content="实验目的 理解操作系统存储管理原理  操作系统的发展使得系统完成了大部分的内存管理工作。对于程序员而言，这些内存管理的过程完全透明不可见。因此，程序员开发时从不关心系统如何为自己分配内存，而且永远认为系统可以分配给程序所需要的内存。在程序开发时，程序员真正需要做的就是：申请内存、使用内存、释放内存，其他一概无需过问。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="操作系统实验3 存储管理">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;25&#x2F;%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C3-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86&#x2F;index.html">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.yangllong.top&#x2F;2019&#x2F;11&#x2F;25&#x2F;%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C3-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86&#x2F;index.html">
 <meta property="og:site_name" content="Welcome to bluepyang&#39;s blog">
 <meta property="og:description" content="实验目的 理解操作系统存储管理原理  操作系统的发展使得系统完成了大部分的内存管理工作。对于程序员而言，这些内存管理的过程完全透明不可见。因此，程序员开发时从不关心系统如何为自己分配内存，而且永远认为系统可以分配给程序所需要的内存。在程序开发时，程序员真正需要做的就是：申请内存、使用内存、释放内存，其他一概无需过问。">
 <meta property="og:locale" content="zh_CN">
@@ -61,7 +61,7 @@
 <meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/2019/11/25/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C3-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/">
+<link rel="canonical" href="https://www.yangllong.top/2019/11/25/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C3-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/">
 
 
 <script id="page-configurations">
@@ -214,12 +214,12 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/25/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C3-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="https://www.yangllong.top/2019/11/25/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C3-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="bluepyang">
-      <meta itemprop="description" content="愿你我眼中所见，皆是笑容🙂">
+      <meta itemprop="description" content="愿你我眼中所见，皆是笑容😄">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -531,7 +531,7 @@ exit()的参数会被传递给一些操作系统，包括UNIX,Linux,和MS DOS，
     <img class="site-author-image" itemprop="image" alt="bluepyang"
       src="/images/avatar.jpg">
   <p class="site-author-name" itemprop="name">bluepyang</p>
-  <div class="site-description" itemprop="description">愿你我眼中所见，皆是笑容🙂</div>
+  <div class="site-description" itemprop="description">愿你我眼中所见，皆是笑容😄</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
@@ -564,7 +564,10 @@ exit()的参数会被传递给一些操作系统，包括UNIX,Linux,和MS DOS，
         <a href="mailto:yll1671158@163.com" title="E-Mail → mailto:yll1671158@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://blog.csdn.net/bluepyang" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;bluepyang" rel="noopener" target="_blank"><i class="fa fa-fw fa-crosshairs"></i>CSDN</a>
+        <a href="https://blog.csdn.net/bluepyang" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;bluepyang" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom csdn"></i>CSDN</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/130954022" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;130954022" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom bilibili"></i>Bilibili</a>
       </span>
   </div>
 
@@ -596,11 +599,7 @@ exit()的参数会被传递给一些操作系统，包括UNIX,Linux,和MS DOS，
 
     <footer class="footer">
       <div class="footer-inner">
-        <!--站点访问统计-->
-<script
-  async
-  src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"
-></script>
+        
 
 <div class="copyright">
   
@@ -627,7 +626,7 @@ exit()的参数会被传递给一些操作系统，包括UNIX,Linux,和MS DOS，
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.1.1
   </div>
   <span class="post-meta-divider">|</span>
-  <div class="theme-info">主题 – <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.6.0
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.6.0
   </div>
  -->
 
@@ -676,7 +675,7 @@ exit()的参数会被传递给一些操作系统，包括UNIX,Linux,和MS DOS，
 <script src="/js/motion.js"></script>
 
 
-<script src="/js/schemes/muse.js"></script>
+<script src="/js/schemes/pisces.js"></script>
 
 
 <script src="/js/next-boot.js"></script>
