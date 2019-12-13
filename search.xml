@@ -7,25 +7,6 @@
 <hr>
 <a id="more"></a>
 <p>I am here!</p>
-<h2 id="待办"><a class="header-anchor" href="#待办"></a>待办</h2>
-<ul>
-<li>[x] 文章字体修改，布局</li>
-<li>[x] 标签云</li>
-<li>[x] 支持更多markdown语法
-<ul>
-<li>☑️ emoji</li>
-<li>☑️上下标</li>
-</ul>
-</li>
-<li>[ ] 设置评论邮件提醒功能</li>
-<li>[ ] 继续美化
-<ul>
-<li>[ ] 修改背景</li>
-<li>[ ] 字体</li>
-</ul>
-</li>
-<li>[ ] CDN加速博客</li>
-</ul>
 <h2 id="测试居中"><a class="header-anchor" href="#测试居中"></a>测试居中</h2>
 <!-- HTML方式: 直接在 Markdown 文件中编写 HTML 来调用 -->
 <!-- 其中 class="blockquote-center" 是必须的 -->
