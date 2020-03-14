@@ -1,6 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>HashMap源码分析</title>
+    <url>/2020/03/14/HashMap%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</url>
+    <content><![CDATA[<h2 id="hashmap的简单使用"><a class="header-anchor" href="#hashmap的简单使用"></a>HashMap的简单使用</h2>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestHashMap</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Map&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        map.put(<span class="string">"a"</span>,<span class="string">"aaa"</span>);</span><br><span class="line">        map.put(<span class="string">"b"</span>,<span class="string">"bbb"</span>);</span><br><span class="line">        map.put(<span class="string">"c"</span>,<span class="string">"ccc"</span>);</span><br><span class="line">        map.put(<span class="string">"d"</span>,<span class="string">"ddd"</span>);</span><br><span class="line">        map.put(<span class="string">"e"</span>,<span class="string">"eee"</span>);</span><br><span class="line">        System.out.println(map.get(<span class="string">"a"</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//运行结果：aaa</span></span><br></pre></td></tr></table></figure>
+<p>HashMap存储Key-Value（键值对）数据</p>
+<a id="more"></a>
+<h2 id="hashmap实现原理"><a class="header-anchor" href="#hashmap实现原理"></a>HashMap实现原理</h2>
+<p>在Java8之前，通过数组+链表实现</p>
+<p>Java8中，改为数组+链表+红黑树。当链表长度超过8时，将链表改为红黑树，降低数据查找的时间复杂度</p>
+<p>HashMap成员</p>
+<p>一个数组，数组里面每个元素都是链表</p>
+<p>链表存储对象(Entry)：包括Key，Value，next，hash</p>
+<h2 id="hashmap简单实现"><a class="header-anchor" href="#hashmap简单实现"></a>HashMap简单实现</h2>
+<p>定义Map接口</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MyMap</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> V <span class="title">put</span><span class="params">(K k,V v)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> V <span class="title">get</span><span class="params">(K k)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">size</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="class"><span class="keyword">interface</span> <span class="title">Entry</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt;</span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> K <span class="title">getKey</span><span class="params">()</span></span>;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> V <span class="title">getValue</span><span class="params">()</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>HashMap简单实现</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyHashMap</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; <span class="keyword">implements</span> <span class="title">MyMap</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//数组加链表</span></span><br><span class="line">    <span class="keyword">private</span> Entry&lt;K, V&gt;[] table;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> size = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> defaultLength = <span class="number">16</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyHashMap</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        table = <span class="keyword">new</span> Entry[defaultLength];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> V <span class="title">put</span><span class="params">(K k, V v)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//1.key进行hash  2.对应数组下标  3.如果是null  4.是否可以存储</span></span><br><span class="line">        <span class="keyword">int</span> index = hash(k);</span><br><span class="line">        Entry&lt;K, V&gt; entry = table[index];</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == entry) &#123;</span><br><span class="line">            table[index] = <span class="keyword">new</span> Entry&lt;&gt;(k, v, <span class="keyword">null</span>, index);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            table[index] = <span class="keyword">new</span> Entry&lt;&gt;(k, v, entry, index);</span><br><span class="line">        &#125;</span><br><span class="line">        size++;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> table[index].getValue();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">hash</span><span class="params">(K k)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> index = k.hashCode() % (defaultLength - <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> Math.abs(index);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> V <span class="title">get</span><span class="params">(K k)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (size == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//hash出来的index  获取到当前Entry对象  判断对象有没有值  比较 在继续查找直到  key  hashcode</span></span><br><span class="line">        <span class="keyword">int</span> index = hash(k);</span><br><span class="line"></span><br><span class="line">        Entry&lt;K, V&gt; entry = getEntry(k, index);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> entry == <span class="keyword">null</span> ? <span class="keyword">null</span> : entry.getValue();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Entry&lt;K, V&gt; <span class="title">getEntry</span><span class="params">(K k, <span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (Entry&lt;K, V&gt; entry = table[index]; entry != <span class="keyword">null</span>; entry = entry.next) &#123;</span><br><span class="line">            <span class="keyword">if</span> (entry.hash == index &amp;&amp; (k == entry.getKey() || k.equals(entry.getKey()))) &#123;</span><br><span class="line">                <span class="keyword">return</span> entry;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">size</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> size;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; <span class="keyword">implements</span>  <span class="title">MyMap</span>.<span class="title">Entry</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">        K k;</span><br><span class="line">        V v;</span><br><span class="line">        MyHashMap.Entry&lt;K, V&gt; next;</span><br><span class="line">        <span class="keyword">int</span> hash;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Entry</span><span class="params">(K k, V v, MyHashMap.Entry&lt;K, V&gt; next, <span class="keyword">int</span> hash)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.k = k;</span><br><span class="line">            <span class="keyword">this</span>.v = v;</span><br><span class="line">            <span class="keyword">this</span>.next = next;</span><br><span class="line">            <span class="keyword">this</span>.hash = hash;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> K <span class="title">getKey</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> k;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> V <span class="title">getValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> v;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestMyHashMap</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        MyMap&lt;String, String&gt; map = <span class="keyword">new</span> MyHashMap();</span><br><span class="line">        map.put(<span class="string">"yll"</span>, <span class="string">"yll"</span>);</span><br><span class="line">        System.out.println(map.get(<span class="string">"yll"</span>));</span><br><span class="line">        System.out.println(map.size());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*运行结果：</span></span><br><span class="line"><span class="comment">yll</span></span><br><span class="line"><span class="comment">1</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+<p>这里只实现了Java8之前的数组加链表形式</p>
+<h2 id="hashmap注意事项"><a class="header-anchor" href="#hashmap注意事项"></a>HashMap注意事项</h2>
+<p>HashMap是线程不安全的，put方法和扩容时都是不安全的</p>
+<p>但是get方法是线程安全的</p>
+<h2 id="the-end"><a class="header-anchor" href="#the-end"></a>The End</h2>
+<p>㊗️恭喜你看完了这篇文章！</p>
+<p>如果你有什么疑问和想法，可以直接在下面评论，或者给我发邮件</p>
+<p>📧 <a href="mailto:yll1671158@163.com">我的邮箱</a></p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Windows定时关机程序</title>
     <url>/2020/01/02/windows%E5%AE%9A%E6%97%B6%E5%85%B3%E6%9C%BA%E7%A8%8B%E5%BA%8F/</url>
     <content><![CDATA[<h2 id="原因"><a class="header-anchor" href="#原因"></a>原因</h2>
@@ -41,6 +77,8 @@
 <p>但是windows有时候关机并不是直接就关了，它可能还会提醒有未保存的工作啥的，又给了一次苟延残喘的机会。。。</p>
 <h2 id="the-end"><a class="header-anchor" href="#the-end"></a>The End</h2>
 <p>㊗️恭喜你看完了这篇文章！</p>
+<p>如果你有什么疑问和想法，可以直接在下面评论，或者给我发邮件</p>
+<p>📧 <a href="mailto:yll1671158@163.com">我的邮箱</a></p>
 ]]></content>
       <categories>
         <category>不知道分啥类</category>
@@ -243,13 +281,15 @@ $$</p>
 </ul>
 <h2 id="the-end"><a class="header-anchor" href="#the-end"></a>The End</h2>
 <p>㊗️恭喜你看完了这篇文章！</p>
+<p>如果你有什么疑问和想法，可以直接在下面评论，或者给我发邮件</p>
+<p>📧 <a href="mailto:yll1671158@163.com">我的邮箱</a></p>
 ]]></content>
       <categories>
-        <category>LearnJava</category>
+        <category>Java</category>
       </categories>
       <tags>
+        <tag>Java</tag>
         <tag>GitHub</tag>
-        <tag>LearnJava</tag>
       </tags>
   </entry>
   <entry>
@@ -367,6 +407,8 @@ exit()的参数会被传递给一些操作系统，包括UNIX,Linux,和MS DOS，
 <p>注意上面的结果，可以发现这些函数由exit按登记相反的顺序自动调用（先myexit1后myexit2）。如果同一函数登记多次, 也会被调用多次（如这里的myexit1）。而这些处理函数都是在程序退出的时候利用atexit函数调用了这些处理函数。但是如果用_exit()退出程序，则它不关闭任何文件，不清除任何缓冲器、也不调用任何终止函数！</p>
 <h2 id="the-end"><a class="header-anchor" href="#the-end"></a>The End</h2>
 <p>㊗️恭喜你看完了这篇文章！</p>
+<p>如果你有什么疑问和想法，可以直接在下面评论，或者给我发邮件</p>
+<p>📧 <a href="mailto:yll1671158@163.com">我的邮箱</a></p>
 ]]></content>
       <categories>
         <category>实验报告</category>
@@ -546,6 +588,8 @@ exit()的参数会被传递给一些操作系统，包括UNIX,Linux,和MS DOS，
 <p><img src="https://learnopengl-cn.readthedocs.io/zh/latest/img/01/05/shaders3.png" alt="img"></p>
 <h2 id="the-end"><a class="header-anchor" href="#the-end"></a>The End</h2>
 <p>㊗️恭喜你看完了这篇文章！</p>
+<p>如果你有什么疑问和想法，可以直接在下面评论，或者给我发邮件</p>
+<p>📧 <a href="mailto:yll1671158@163.com">我的邮箱</a></p>
 ]]></content>
       <categories>
         <category>计算机图形学</category>
@@ -655,6 +699,8 @@ clone到本地</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo s</span><br><span class="line"></span><br><span class="line">hexo d//推送到GitHub</span><br></pre></td></tr></table></figure>
 <h2 id="the-end"><a class="header-anchor" href="#the-end"></a>The End</h2>
 <p>㊗️恭喜你看完了这篇文章！</p>
+<p>如果你有什么疑问和想法，可以直接在下面评论，或者给我发邮件</p>
+<p>📧 <a href="mailto:yll1671158@163.com">我的邮箱</a></p>
 ]]></content>
       <categories>
         <category>blog</category>
