@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Java多线程2</title>
-    <url>/2020/04/20/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B2/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>Java多线程</title>
     <url>/2020/04/20/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B/</url>
     <content><![CDATA[<h2 id="线程的生命周期"><a class="header-anchor" href="#线程的生命周期"></a>线程的生命周期</h2>
