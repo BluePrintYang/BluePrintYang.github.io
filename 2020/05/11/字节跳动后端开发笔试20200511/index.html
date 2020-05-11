@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/sheep32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/sheep16.png">
+  <link rel="mask-icon" href="/images/sheep.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=EB Garamond:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|Amita:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://www.yangllong.top').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="简易文本编辑器 题目描述  输入： 第一行 正整数N表示N个命令 接下来每一行表示一个命令 1 xx 追加xx到内容后面 2 k  删除最后k个字符 3 k  输出S的第k个字符 4 回滚上一步对S的操作，只有1和2  示例输入 12345678981 abc3 32 31 xy3 2443 1 实例输出 123cya 笔试时写出的代码，ac 123456789101112131415161718">
+<meta property="og:type" content="article">
+<meta property="og:title" content="字节跳动后端开发笔试20200511">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.yangllong.top&#x2F;2020&#x2F;05&#x2F;11&#x2F;%E5%AD%97%E8%8A%82%E8%B7%B3%E5%8A%A8%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91%E7%AC%94%E8%AF%9520200511&#x2F;index.html">
+<meta property="og:site_name" content="Welcome to bluepyang&#39;s blog">
+<meta property="og:description" content="简易文本编辑器 题目描述  输入： 第一行 正整数N表示N个命令 接下来每一行表示一个命令 1 xx 追加xx到内容后面 2 k  删除最后k个字符 3 k  输出S的第k个字符 4 回滚上一步对S的操作，只有1和2  示例输入 12345678981 abc3 32 31 xy3 2443 1 实例输出 123cya 笔试时写出的代码，ac 123456789101112131415161718">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-05-11T04:41:10.000Z">
+<meta property="article:modified_time" content="2020-05-11T04:43:19.091Z">
+<meta property="article:author" content="bluepyang">
+<meta property="article:tag" content="笔试">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://www.yangllong.top/2020/05/11/%E5%AD%97%E8%8A%82%E8%B7%B3%E5%8A%A8%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91%E7%AC%94%E8%AF%9520200511/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>字节跳动后端开发笔试20200511 | Welcome to bluepyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Welcome to bluepyang's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">🐏🐉🐉</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.yangllong.top/2020/05/11/%E5%AD%97%E8%8A%82%E8%B7%B3%E5%8A%A8%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91%E7%AC%94%E8%AF%9520200511/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/pic.jpg">
+      <meta itemprop="name" content="bluepyang">
+      <meta itemprop="description" content="愿你我眼中所见，皆是笑容😄">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to bluepyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          字节跳动后端开发笔试20200511
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-05-11 12:41:10 / 修改时间：12:43:19" itemprop="dateCreated datePublished" datetime="2020-05-11T12:41:10+08:00">2020-05-11</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/05/11/%E5%AD%97%E8%8A%82%E8%B7%B3%E5%8A%A8%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91%E7%AC%94%E8%AF%9520200511/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/05/11/%E5%AD%97%E8%8A%82%E8%B7%B3%E5%8A%A8%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91%E7%AC%94%E8%AF%9520200511/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="简易文本编辑器"><a class="header-anchor" href="#简易文本编辑器"></a>简易文本编辑器</h2>
+<h3 id="题目描述"><a class="header-anchor" href="#题目描述"></a>题目描述</h3>
+<blockquote>
+<p>输入：<br>
+第一行 正整数N表示N个命令<br>
+接下来每一行表示一个命令<br>
+1 xx 追加xx到内容后面<br>
+2 k  删除最后k个字符<br>
+3 k  输出S的第k个字符<br>
+4 回滚上一步对S的操作，只有1和2</p>
+</blockquote>
+<h3 id="示例输入"><a class="header-anchor" href="#示例输入"></a>示例输入</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">8</span><br><span class="line">1 abc</span><br><span class="line">3 3</span><br><span class="line">2 3</span><br><span class="line">1 xy</span><br><span class="line">3 2</span><br><span class="line">4</span><br><span class="line">4</span><br><span class="line">3 1</span><br></pre></td></tr></table></figure>
+<h3 id="实例输出"><a class="header-anchor" href="#实例输出"></a>实例输出</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line">y</span><br><span class="line">a</span><br></pre></td></tr></table></figure>
+<h3 id="笔试时写出的代码-ac"><a class="header-anchor" href="#笔试时写出的代码-ac"></a>笔试时写出的代码，ac</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Stack&lt;Integer&gt; stack;<span class="comment">//保存操作，方便回滚（只保存1，2）</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span>[] command;<span class="comment">//命令数组</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> String[] val;<span class="comment">//命令对应的值的数组</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> StringBuilder str;<span class="comment">//文本框中的内容</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Stack&lt;String&gt; del;<span class="comment">//删除操作删除的字符串</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Scanner s = <span class="keyword">new</span> Scanner(System.in);</span><br><span class="line">        str = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">        <span class="keyword">int</span> N = s.nextInt();</span><br><span class="line">        command = <span class="keyword">new</span> <span class="keyword">int</span>[N];</span><br><span class="line">        val = <span class="keyword">new</span> String[N];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N; i++) &#123;</span><br><span class="line">            command[i] = s.nextInt();</span><br><span class="line">            val[i] = s.nextLine();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//去除输入的空格</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; val.length; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!val[i].equals(<span class="string">""</span>)) &#123;</span><br><span class="line">                StringBuilder ss = <span class="keyword">new</span> StringBuilder(val[i]);</span><br><span class="line">                ss.deleteCharAt(<span class="number">0</span>);</span><br><span class="line">                val[i] = String.valueOf(ss);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        stack = <span class="keyword">new</span> Stack&lt;&gt;();</span><br><span class="line">        del = <span class="keyword">new</span> Stack&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//遍历命令字符串数组，依次执行命令</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N; i++) &#123;</span><br><span class="line">            <span class="comment">//命令1，追加字符串</span></span><br><span class="line">            <span class="keyword">if</span> (command[i] == <span class="number">1</span>) str.append(val[i]);</span><br><span class="line">            <span class="comment">//命令2，删除字符串</span></span><br><span class="line">            <span class="keyword">if</span> (command[i] == <span class="number">2</span>) &#123;</span><br><span class="line">                <span class="comment">//将删除的字符串存入del栈中，方便回滚</span></span><br><span class="line">                <span class="keyword">if</span> (Integer.parseInt(val[i]) &gt;= str.length()) del.push(String.valueOf(str));</span><br><span class="line">                <span class="keyword">else</span> del.push(str.substring(str.length() - Integer.parseInt(val[i]), str.length()));</span><br><span class="line">                <span class="comment">//删除字符串</span></span><br><span class="line">                <span class="keyword">if</span> (Integer.parseInt(val[i]) &gt;= str.length()) str.delete(<span class="number">0</span>, str.length());</span><br><span class="line">                <span class="keyword">else</span> str.delete(str.length() - Integer.parseInt(val[i]), str.length());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//命令3，输出字符</span></span><br><span class="line">            <span class="keyword">if</span> (command[i] == <span class="number">3</span>) &#123;</span><br><span class="line">                <span class="keyword">int</span> index = Integer.parseInt(String.valueOf(val[i])) - <span class="number">1</span>;</span><br><span class="line">                System.out.println(str.charAt(index));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//命令4，回滚</span></span><br><span class="line">            <span class="keyword">if</span> (command[i] == <span class="number">4</span>) rollback();</span><br><span class="line">            <span class="comment">//命令1，2依次入栈，存储的是数组的索引</span></span><br><span class="line">            <span class="keyword">if</span> (command[i] != <span class="number">4</span> &amp;&amp; command[i] != <span class="number">3</span>) stack.push(i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//回滚函数</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">rollback</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> index = stack.pop();<span class="comment">//获取栈顶元素，即上一次执行的操作的数组索引</span></span><br><span class="line">        <span class="keyword">int</span> cmd = command[index];<span class="comment">//根据索引获取命令</span></span><br><span class="line">        String value = val[index];<span class="comment">//根据索引获取命令对应的值</span></span><br><span class="line">        <span class="comment">//上次命令为1，追加字符串，回滚则删除追加的字符串</span></span><br><span class="line">        <span class="keyword">if</span> (cmd == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">int</span> len = value.length();</span><br><span class="line">            str.delete(str.length() - len, str.length());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//上次命令为2，删除字符串，回滚则追加删除的字符串</span></span><br><span class="line">        <span class="keyword">if</span> (cmd == <span class="number">2</span>) str.append(del.pop());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="文章翻译"><a class="header-anchor" href="#文章翻译"></a>文章翻译</h2>
+<h3 id="题目描述-v2"><a class="header-anchor" href="#题目描述-v2"></a>题目描述</h3>
+<blockquote>
+<p>输入：<br>
+第一行表示文章，长度不超过50000<br>
+第二行，正整数[2,50000]，字典单词<br>
+N行，每行一个单词<br>
+输出:<br>
+文章翻译种数对835672545取余<br>
+无法翻译输出0</p>
+</blockquote>
+<h3 id="示例输入-v2"><a class="header-anchor" href="#示例输入-v2"></a>示例输入</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">abcba</span><br><span class="line">5</span><br><span class="line">ab</span><br><span class="line">cb</span><br><span class="line">bc</span><br><span class="line">ba</span><br><span class="line">a</span><br></pre></td></tr></table></figure>
+<h3 id="示例输出"><a class="header-anchor" href="#示例输出"></a>示例输出</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2</span><br></pre></td></tr></table></figure>
+<h2 id="袜子染色"><a class="header-anchor" href="#袜子染色"></a>袜子染色</h2>
+<h3 id="题目描述-v3"><a class="header-anchor" href="#题目描述-v3"></a>题目描述</h3>
+<blockquote>
+<p>第i天穿袜子a_i和b_i，要求颜色标号相同<br>
+第一行两个整数n（袜子数量）和m（天数）均小于100,000<br>
+第二行n个整数，第i个数c_i表示第i只袜子颜色，不大于100,000<br>
+接下来m行，每行两个整数a_i和b_i，表示第i天穿的袜子编号<br>
+输出最少需要染色数</p>
+</blockquote>
+<h3 id="示例输入-v3"><a class="header-anchor" href="#示例输入-v3"></a>示例输入</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">3 2</span><br><span class="line">1 2 3</span><br><span class="line">1 2</span><br><span class="line">2 3</span><br></pre></td></tr></table></figure>
+<h3 id="示例输出-v2"><a class="header-anchor" href="#示例输出-v2"></a>示例输出</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2</span><br></pre></td></tr></table></figure>
+<h2 id="和猫咪玩游戏"><a class="header-anchor" href="#和猫咪玩游戏"></a>和猫咪玩游戏</h2>
+<h3 id="题目描述-v4"><a class="header-anchor" href="#题目描述-v4"></a>题目描述</h3>
+<blockquote>
+<p>首先输入字符串s<br>
+一行输入一个n，表示接下来有n个操作<br>
+接下来n行，每行表示一个操作<br>
+修改：1 整数pos 一个字符c 表示将整数替换为c<br>
+提问：2 l r  求s[l…r]有多少个互不相同的字符</p>
+</blockquote>
+<h3 id="示例输入-v4"><a class="header-anchor" href="#示例输入-v4"></a>示例输入</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">abacaba</span><br><span class="line">5</span><br><span class="line">2 1 4</span><br><span class="line">1 4 b</span><br><span class="line">1 5 b</span><br><span class="line">2 4 6</span><br><span class="line">2 1 7</span><br></pre></td></tr></table></figure>
+<h3 id="示例输出-v3"><a class="header-anchor" href="#示例输出-v3"></a>示例输出</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">3</span><br><span class="line">1</span><br><span class="line">2</span><br></pre></td></tr></table></figure>
+<h2 id="the-end"><a class="header-anchor" href="#the-end"></a>The End</h2>
+<p>㊗️恭喜你看完了这篇文章！</p>
+<p>如果你有什么疑问和想法，可以直接在下面评论，或者给我发邮件</p>
+<p>📧 <a href="mailto:yll1671158@163.com">我的邮箱</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%AC%94%E8%AF%95/" rel="tag"><i class="fa fa-tag"></i> 笔试</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/20/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="prev" title="Java多线程">
+      <i class="fa fa-chevron-left"></i> Java多线程
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简易文本编辑器"><span class="nav-number">1.</span> <span class="nav-text">简易文本编辑器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#题目描述"><span class="nav-number">1.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#示例输入"><span class="nav-number">1.2.</span> <span class="nav-text">示例输入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实例输出"><span class="nav-number">1.3.</span> <span class="nav-text">实例输出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#笔试时写出的代码-ac"><span class="nav-number">1.4.</span> <span class="nav-text">笔试时写出的代码，ac</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文章翻译"><span class="nav-number">2.</span> <span class="nav-text">文章翻译</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#题目描述-v2"><span class="nav-number">2.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#示例输入-v2"><span class="nav-number">2.2.</span> <span class="nav-text">示例输入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#示例输出"><span class="nav-number">2.3.</span> <span class="nav-text">示例输出</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#袜子染色"><span class="nav-number">3.</span> <span class="nav-text">袜子染色</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#题目描述-v3"><span class="nav-number">3.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#示例输入-v3"><span class="nav-number">3.2.</span> <span class="nav-text">示例输入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#示例输出-v2"><span class="nav-number">3.3.</span> <span class="nav-text">示例输出</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#和猫咪玩游戏"><span class="nav-number">4.</span> <span class="nav-text">和猫咪玩游戏</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#题目描述-v4"><span class="nav-number">4.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#示例输入-v4"><span class="nav-number">4.2.</span> <span class="nav-text">示例输入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#示例输出-v3"><span class="nav-number">4.3.</span> <span class="nav-text">示例输出</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#the-end"><span class="nav-number">5.</span> <span class="nav-text">The End</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="bluepyang"
+      src="/images/pic.jpg">
+  <p class="site-author-name" itemprop="name">bluepyang</p>
+  <div class="site-description" itemprop="description">愿你我眼中所见，皆是笑容😄</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/BluePrintYang" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;BluePrintYang" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yll1671158@163.com" title="E-Mail → mailto:yll1671158@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/bluepyang" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;bluepyang" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom csdn"></i>CSDN</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/130954022" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;130954022" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom bilibili"></i>Bilibili</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://notlxb.top/" title="http:&#x2F;&#x2F;notlxb.top&#x2F;" rel="noopener" target="_blank">notlxb</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.yunot.top/" title="http:&#x2F;&#x2F;www.yunot.top&#x2F;" rel="noopener" target="_blank">yunot</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">bluepyang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">36k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33 分钟</span>
+</div>
+
+ <!--
+
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.1.1
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.6.0
+  </div>
+ -->
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-child"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-heartbeat"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='179,214,110' opacity='0.8' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el: '#valine-comments',
+      verify: false,
+      notify: false,
+      appId: 'JAP6dLlG1t54MUsbc4smdek0-gzGzoHsz',
+      appKey: '4qpdy8FSPq8E61ULyXUpf9dP',
+      placeholder: "这里可以留下你的足迹~",
+      avatar: 'mm',
+      meta: guest,
+      pageSize: '10' || 10,
+      visitor: false,
+      lang: '' || 'zh-cn',
+      path: location.pathname,
+      recordIP: true,
+      serverURLs: ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+<!-- 页面点击小红心 -->
+<script type="text/javascript"   src="/js/src/love.js"></script>
+<!-- 背景动画 
+<script type="text/javascript"   src="/js/src/particle.js"></script>
+-->
+</html>

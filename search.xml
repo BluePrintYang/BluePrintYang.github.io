@@ -1,6 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>字节跳动后端开发笔试20200511</title>
+    <url>/2020/05/11/%E5%AD%97%E8%8A%82%E8%B7%B3%E5%8A%A8%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91%E7%AC%94%E8%AF%9520200511/</url>
+    <content><![CDATA[<h2 id="简易文本编辑器"><a class="header-anchor" href="#简易文本编辑器"></a>简易文本编辑器</h2>
+<h3 id="题目描述"><a class="header-anchor" href="#题目描述"></a>题目描述</h3>
+<blockquote>
+<p>输入：<br>
+第一行 正整数N表示N个命令<br>
+接下来每一行表示一个命令<br>
+1 xx 追加xx到内容后面<br>
+2 k  删除最后k个字符<br>
+3 k  输出S的第k个字符<br>
+4 回滚上一步对S的操作，只有1和2</p>
+</blockquote>
+<h3 id="示例输入"><a class="header-anchor" href="#示例输入"></a>示例输入</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">8</span><br><span class="line">1 abc</span><br><span class="line">3 3</span><br><span class="line">2 3</span><br><span class="line">1 xy</span><br><span class="line">3 2</span><br><span class="line">4</span><br><span class="line">4</span><br><span class="line">3 1</span><br></pre></td></tr></table></figure>
+<h3 id="实例输出"><a class="header-anchor" href="#实例输出"></a>实例输出</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">c</span><br><span class="line">y</span><br><span class="line">a</span><br></pre></td></tr></table></figure>
+<h3 id="笔试时写出的代码-ac"><a class="header-anchor" href="#笔试时写出的代码-ac"></a>笔试时写出的代码，ac</h3>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Stack&lt;Integer&gt; stack;<span class="comment">//保存操作，方便回滚（只保存1，2）</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span>[] command;<span class="comment">//命令数组</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> String[] val;<span class="comment">//命令对应的值的数组</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> StringBuilder str;<span class="comment">//文本框中的内容</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Stack&lt;String&gt; del;<span class="comment">//删除操作删除的字符串</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Scanner s = <span class="keyword">new</span> Scanner(System.in);</span><br><span class="line">        str = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">        <span class="keyword">int</span> N = s.nextInt();</span><br><span class="line">        command = <span class="keyword">new</span> <span class="keyword">int</span>[N];</span><br><span class="line">        val = <span class="keyword">new</span> String[N];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N; i++) &#123;</span><br><span class="line">            command[i] = s.nextInt();</span><br><span class="line">            val[i] = s.nextLine();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//去除输入的空格</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; val.length; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!val[i].equals(<span class="string">""</span>)) &#123;</span><br><span class="line">                StringBuilder ss = <span class="keyword">new</span> StringBuilder(val[i]);</span><br><span class="line">                ss.deleteCharAt(<span class="number">0</span>);</span><br><span class="line">                val[i] = String.valueOf(ss);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        stack = <span class="keyword">new</span> Stack&lt;&gt;();</span><br><span class="line">        del = <span class="keyword">new</span> Stack&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//遍历命令字符串数组，依次执行命令</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N; i++) &#123;</span><br><span class="line">            <span class="comment">//命令1，追加字符串</span></span><br><span class="line">            <span class="keyword">if</span> (command[i] == <span class="number">1</span>) str.append(val[i]);</span><br><span class="line">            <span class="comment">//命令2，删除字符串</span></span><br><span class="line">            <span class="keyword">if</span> (command[i] == <span class="number">2</span>) &#123;</span><br><span class="line">                <span class="comment">//将删除的字符串存入del栈中，方便回滚</span></span><br><span class="line">                <span class="keyword">if</span> (Integer.parseInt(val[i]) &gt;= str.length()) del.push(String.valueOf(str));</span><br><span class="line">                <span class="keyword">else</span> del.push(str.substring(str.length() - Integer.parseInt(val[i]), str.length()));</span><br><span class="line">                <span class="comment">//删除字符串</span></span><br><span class="line">                <span class="keyword">if</span> (Integer.parseInt(val[i]) &gt;= str.length()) str.delete(<span class="number">0</span>, str.length());</span><br><span class="line">                <span class="keyword">else</span> str.delete(str.length() - Integer.parseInt(val[i]), str.length());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//命令3，输出字符</span></span><br><span class="line">            <span class="keyword">if</span> (command[i] == <span class="number">3</span>) &#123;</span><br><span class="line">                <span class="keyword">int</span> index = Integer.parseInt(String.valueOf(val[i])) - <span class="number">1</span>;</span><br><span class="line">                System.out.println(str.charAt(index));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//命令4，回滚</span></span><br><span class="line">            <span class="keyword">if</span> (command[i] == <span class="number">4</span>) rollback();</span><br><span class="line">            <span class="comment">//命令1，2依次入栈，存储的是数组的索引</span></span><br><span class="line">            <span class="keyword">if</span> (command[i] != <span class="number">4</span> &amp;&amp; command[i] != <span class="number">3</span>) stack.push(i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//回滚函数</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">rollback</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> index = stack.pop();<span class="comment">//获取栈顶元素，即上一次执行的操作的数组索引</span></span><br><span class="line">        <span class="keyword">int</span> cmd = command[index];<span class="comment">//根据索引获取命令</span></span><br><span class="line">        String value = val[index];<span class="comment">//根据索引获取命令对应的值</span></span><br><span class="line">        <span class="comment">//上次命令为1，追加字符串，回滚则删除追加的字符串</span></span><br><span class="line">        <span class="keyword">if</span> (cmd == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">int</span> len = value.length();</span><br><span class="line">            str.delete(str.length() - len, str.length());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//上次命令为2，删除字符串，回滚则追加删除的字符串</span></span><br><span class="line">        <span class="keyword">if</span> (cmd == <span class="number">2</span>) str.append(del.pop());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="文章翻译"><a class="header-anchor" href="#文章翻译"></a>文章翻译</h2>
+<h3 id="题目描述-v2"><a class="header-anchor" href="#题目描述-v2"></a>题目描述</h3>
+<blockquote>
+<p>输入：<br>
+第一行表示文章，长度不超过50000<br>
+第二行，正整数[2,50000]，字典单词<br>
+N行，每行一个单词<br>
+输出:<br>
+文章翻译种数对835672545取余<br>
+无法翻译输出0</p>
+</blockquote>
+<h3 id="示例输入-v2"><a class="header-anchor" href="#示例输入-v2"></a>示例输入</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">abcba</span><br><span class="line">5</span><br><span class="line">ab</span><br><span class="line">cb</span><br><span class="line">bc</span><br><span class="line">ba</span><br><span class="line">a</span><br></pre></td></tr></table></figure>
+<h3 id="示例输出"><a class="header-anchor" href="#示例输出"></a>示例输出</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">2</span><br></pre></td></tr></table></figure>
+<h2 id="袜子染色"><a class="header-anchor" href="#袜子染色"></a>袜子染色</h2>
+<h3 id="题目描述-v3"><a class="header-anchor" href="#题目描述-v3"></a>题目描述</h3>
+<blockquote>
+<p>第i天穿袜子a_i和b_i，要求颜色标号相同<br>
+第一行两个整数n（袜子数量）和m（天数）均小于100,000<br>
+第二行n个整数，第i个数c_i表示第i只袜子颜色，不大于100,000<br>
+接下来m行，每行两个整数a_i和b_i，表示第i天穿的袜子编号<br>
+输出最少需要染色数</p>
+</blockquote>
+<h3 id="示例输入-v3"><a class="header-anchor" href="#示例输入-v3"></a>示例输入</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">3 2</span><br><span class="line">1 2 3</span><br><span class="line">1 2</span><br><span class="line">2 3</span><br></pre></td></tr></table></figure>
+<h3 id="示例输出-v2"><a class="header-anchor" href="#示例输出-v2"></a>示例输出</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">2</span><br></pre></td></tr></table></figure>
+<h2 id="和猫咪玩游戏"><a class="header-anchor" href="#和猫咪玩游戏"></a>和猫咪玩游戏</h2>
+<h3 id="题目描述-v4"><a class="header-anchor" href="#题目描述-v4"></a>题目描述</h3>
+<blockquote>
+<p>首先输入字符串s<br>
+一行输入一个n，表示接下来有n个操作<br>
+接下来n行，每行表示一个操作<br>
+修改：1 整数pos 一个字符c 表示将整数替换为c<br>
+提问：2 l r  求s[l…r]有多少个互不相同的字符</p>
+</blockquote>
+<h3 id="示例输入-v4"><a class="header-anchor" href="#示例输入-v4"></a>示例输入</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">abacaba</span><br><span class="line">5</span><br><span class="line">2 1 4</span><br><span class="line">1 4 b</span><br><span class="line">1 5 b</span><br><span class="line">2 4 6</span><br><span class="line">2 1 7</span><br></pre></td></tr></table></figure>
+<h3 id="示例输出-v3"><a class="header-anchor" href="#示例输出-v3"></a>示例输出</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">3</span><br><span class="line">1</span><br><span class="line">2</span><br></pre></td></tr></table></figure>
+<h2 id="the-end"><a class="header-anchor" href="#the-end"></a>The End</h2>
+<p>㊗️恭喜你看完了这篇文章！</p>
+<p>如果你有什么疑问和想法，可以直接在下面评论，或者给我发邮件</p>
+<p>📧 <a href="mailto:yll1671158@163.com">我的邮箱</a></p>
+]]></content>
+      <tags>
+        <tag>笔试</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java多线程</title>
     <url>/2020/04/20/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B/</url>
     <content><![CDATA[<h2 id="线程的生命周期"><a class="header-anchor" href="#线程的生命周期"></a>线程的生命周期</h2>
