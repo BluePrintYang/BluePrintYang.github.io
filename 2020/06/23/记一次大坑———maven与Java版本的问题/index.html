@@ -48,20 +48,25 @@
   };
 </script>
 
-  <meta name="description" content="第一题  输入一个整数n 1&lt;n&lt;109 输出一个整数 找出其所有非空子集中所有元素个数之和，然后对109+7取模，输出结果 例如输入2，有{1}，{2}，{1，2}3个非空子集，所有元素个数之和为4 输出结果为4">
+  <meta name="description" content="问题复现 首先新建一个maven项目 在pom.xml中随意导入一个依赖 这里我在阿里云maven仓库中随便找了一个  在项目中导入依赖后报错  详细报错信息 1Could not transfer artifact ai.libs:jaicore-planning:pom:0.1.4 from&#x2F;to alimaven (http:&#x2F;&#x2F;maven.aliyun.com">
 <meta property="og:type" content="article">
-<meta property="og:title" content="阿里3月23日笔试">
-<meta property="og:url" content="https:&#x2F;&#x2F;www.yangllong.top&#x2F;2020&#x2F;03&#x2F;23&#x2F;%E9%98%BF%E9%87%8C3%E6%9C%8823%E6%97%A5%E7%AC%94%E8%AF%95&#x2F;index.html">
+<meta property="og:title" content="记一次大坑———maven与Java版本的问题">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.yangllong.top&#x2F;2020&#x2F;06&#x2F;23&#x2F;%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%A7%E5%9D%91%E2%80%94%E2%80%94%E2%80%94maven%E4%B8%8EJava%E7%89%88%E6%9C%AC%E7%9A%84%E9%97%AE%E9%A2%98&#x2F;index.html">
 <meta property="og:site_name" content="Welcome to bluepyang&#39;s blog">
-<meta property="og:description" content="第一题  输入一个整数n 1&lt;n&lt;109 输出一个整数 找出其所有非空子集中所有元素个数之和，然后对109+7取模，输出结果 例如输入2，有{1}，{2}，{1，2}3个非空子集，所有元素个数之和为4 输出结果为4">
+<meta property="og:description" content="问题复现 首先新建一个maven项目 在pom.xml中随意导入一个依赖 这里我在阿里云maven仓库中随便找了一个  在项目中导入依赖后报错  详细报错信息 1Could not transfer artifact ai.libs:jaicore-planning:pom:0.1.4 from&#x2F;to alimaven (http:&#x2F;&#x2F;maven.aliyun.com">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-03-23T12:38:58.000Z">
-<meta property="article:modified_time" content="2020-03-23T12:44:19.971Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;www.yangllong.top&#x2F;PicHub&#x2F;jaicore.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;www.yangllong.top&#x2F;PicHub&#x2F;20200623141012.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;www.yangllong.top&#x2F;PicHub&#x2F;20200623141629.png">
+<meta property="article:published_time" content="2020-06-23T04:39:52.000Z">
+<meta property="article:modified_time" content="2020-06-27T04:20:36.412Z">
 <meta property="article:author" content="bluepyang">
-<meta property="article:tag" content="笔试">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="maven">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;www.yangllong.top&#x2F;PicHub&#x2F;jaicore.png">
 
-<link rel="canonical" href="https://www.yangllong.top/2020/03/23/%E9%98%BF%E9%87%8C3%E6%9C%8823%E6%97%A5%E7%AC%94%E8%AF%95/">
+<link rel="canonical" href="https://www.yangllong.top/2020/06/23/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%A7%E5%9D%91%E2%80%94%E2%80%94%E2%80%94maven%E4%B8%8EJava%E7%89%88%E6%9C%AC%E7%9A%84%E9%97%AE%E9%A2%98/">
 
 
 <script id="page-configurations">
@@ -73,7 +78,7 @@
   };
 </script>
 
-  <title>阿里3月23日笔试 | Welcome to bluepyang's blog</title>
+  <title>记一次大坑———maven与Java版本的问题 | Welcome to bluepyang's blog</title>
   
 
 
@@ -214,7 +219,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.yangllong.top/2020/03/23/%E9%98%BF%E9%87%8C3%E6%9C%8823%E6%97%A5%E7%AC%94%E8%AF%95/">
+    <link itemprop="mainEntityOfPage" href="https://www.yangllong.top/2020/06/23/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%A7%E5%9D%91%E2%80%94%E2%80%94%E2%80%94maven%E4%B8%8EJava%E7%89%88%E6%9C%AC%E7%9A%84%E9%97%AE%E9%A2%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/pic.jpg">
@@ -227,7 +232,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          阿里3月23日笔试
+          记一次大坑———maven与Java版本的问题
         </h1>
 
         <div class="post-meta">
@@ -236,9 +241,26 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-03-23 20:38:58 / 修改时间：20:44:19" itemprop="dateCreated datePublished" datetime="2020-03-23T20:38:58+08:00">2020-03-23</time>
+              <time title="创建时间：2020-06-23 12:39:52" itemprop="dateCreated datePublished" datetime="2020-06-23T12:39:52+08:00">2020-06-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-27 12:20:36" itemprop="dateModified" datetime="2020-06-27T12:20:36+08:00">2020-06-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Problems/" itemprop="url" rel="index">
+                    <span itemprop="name">Problems</span>
+                  </a>
+                </span>
             </span>
 
           
@@ -257,8 +279,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2020/03/23/%E9%98%BF%E9%87%8C3%E6%9C%8823%E6%97%A5%E7%AC%94%E8%AF%95/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/03/23/%E9%98%BF%E9%87%8C3%E6%9C%8823%E6%97%A5%E7%AC%94%E8%AF%95/" itemprop="commentCount"></span>
+    <a title="valine" href="/2020/06/23/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%A7%E5%9D%91%E2%80%94%E2%80%94%E2%80%94maven%E4%B8%8EJava%E7%89%88%E6%9C%AC%E7%9A%84%E9%97%AE%E9%A2%98/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/06/23/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%A7%E5%9D%91%E2%80%94%E2%80%94%E2%80%94maven%E4%B8%8EJava%E7%89%88%E6%9C%AC%E7%9A%84%E9%97%AE%E9%A2%98/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -268,14 +290,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>891</span>
+              <span>1.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -287,42 +309,47 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="第一题"><a class="header-anchor" href="#第一题"></a>第一题</h2>
+        <h2 id="问题复现"><a class="header-anchor" href="#问题复现"></a>问题复现</h2>
+<p>首先新建一个maven项目</p>
+<p>在pom.xml中随意导入一个依赖</p>
+<p>这里我在阿里云maven仓库中随便找了一个</p>
+<p><img src="https://www.yangllong.top/PicHub/jaicore.png" alt="alimaven"></p>
+<p>在项目中导入依赖后报错</p>
+<p><img src="https://www.yangllong.top/PicHub/20200623141012.png" alt="wrong"></p>
+<p>详细报错信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Could not transfer artifact ai.libs:jaicore-planning:pom:0.1.4 from&#x2F;to alimaven (http:&#x2F;&#x2F;maven.aliyun.com&#x2F;nexus&#x2F;content&#x2F;groups&#x2F;public&#x2F;): Transfer failed for http:&#x2F;&#x2F;maven.aliyun.com&#x2F;nexus&#x2F;content&#x2F;groups&#x2F;public&#x2F;ai&#x2F;libs&#x2F;jaicore-planning&#x2F;0.1.4&#x2F;jaicore-planning-0.1.4.pom</span><br></pre></td></tr></table></figure>
+<p>发现在本地maven仓库中只下载了.lastupdated文件</p>
+<p><img src="https://www.yangllong.top/PicHub/20200623141629.png" alt=""></p>
+<h2 id="尝试解决方法1"><a class="header-anchor" href="#尝试解决方法1"></a>尝试解决方法1</h2>
+<p>查看其他人的解决办法，需要删除此文件重新导入</p>
+<p>这里附上删除所有.lastupdated文件脚本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#清理maven仓库.bat</span></span><br><span class="line"><span class="built_in">set</span> REPOSITORY_PATH=D:\maven\repository <span class="comment">#此处修改为本地maven仓库的路径</span></span><br><span class="line">rem 正在搜索...</span><br><span class="line"><span class="keyword">for</span> /f <span class="string">"delims="</span> %%i <span class="keyword">in</span> (<span class="string">'dir /b /s "%REPOSITORY_PATH%\*lastUpdated*"'</span>) <span class="keyword">do</span> (</span><br><span class="line">    del /s /q %%i</span><br><span class="line">)</span><br><span class="line">rem 搜索完毕</span><br><span class="line">pause</span><br></pre></td></tr></table></figure>
+<p>然后这并没有解决我的问题，无论删除多少次，再重新导入依赖，都只会生成.lastupdated文件！！心累😫</p>
+<p>显然，这个方法不能解决问题。</p>
+<h2 id="尝试解决方法2"><a class="header-anchor" href="#尝试解决方法2"></a>尝试解决方法2</h2>
+<p>然后我也曾想是不是阿里云镜像仓库的问题，可能阿里云仓库中没有这个jar包？换个镜像能不能解决问题。现在看来也显然不是，因为我这里就是之间在阿里云仓库中找的依赖。😢</p>
+<h2 id="尝试解决方法3"><a class="header-anchor" href="#尝试解决方法3"></a>尝试解决方法3</h2>
+<p>在terminal中使用<code>mvn install -e</code>命令查看报错信息</p>
+<p>找到关键信息</p>
+<p>？？？</p>
+<p>错误复现的时候，他突然build success？？？</p>
+<p>我无语</p>
+<p>本来应该是这个错误</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed Error</span><br></pre></td></tr></table></figure>
+<p>按照网上方法添加证书的</p>
+<p>从网站上下载证书保存为xxx.cer</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> %JAVA_HOME%\lib\security\cacerts</span><br><span class="line">keytool -import -<span class="built_in">alias</span> xxx -keystore cacerts -file D://xxx.cer</span><br><span class="line">keytool -list -keystore cacerts -<span class="built_in">alias</span> &lt;<span class="built_in">alias</span>&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="解法方法4"><a class="header-anchor" href="#解法方法4"></a>解法方法4</h2>
+<p>本来的解决方案是maven3.6.3需要更换Java版本，我用的openjdk14成功了</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">profile</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">id</span>&gt;</span>jdk-14<span class="tag">&lt;/<span class="name">id</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">activation</span>&gt;</span>    </span><br><span class="line">    	<span class="tag">&lt;<span class="name">activeByDefault</span>&gt;</span>true<span class="tag">&lt;/<span class="name">activeByDefault</span>&gt;</span>    </span><br><span class="line">    	<span class="tag">&lt;<span class="name">jdk</span>&gt;</span>14<span class="tag">&lt;/<span class="name">jdk</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;/<span class="name">activation</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span>    </span><br><span class="line">    	<span class="tag">&lt;<span class="name">maven.compiler.source</span>&gt;</span>14<span class="tag">&lt;/<span class="name">maven.compiler.source</span>&gt;</span>    </span><br><span class="line">    	<span class="tag">&lt;<span class="name">maven.compiler.target</span>&gt;</span>14<span class="tag">&lt;/<span class="name">maven.compiler.target</span>&gt;</span>    </span><br><span class="line">    	<span class="tag">&lt;<span class="name">maven.compiler.compilerVersion</span>&gt;</span>14<span class="tag">&lt;/<span class="name">maven.compiler.compilerVersion</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span>    </span><br><span class="line"><span class="tag">&lt;/<span class="name">profile</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>或者使用旧版本maven 3.6.1可使用Java1.8</p>
+<p>写博客搞着搞着maven3.6.3又用不了了，openjdk14也不行了，换回了3.6.1</p>
+<p>就很看缘分？？</p>
+<h2 id="总结"><a class="header-anchor" href="#总结"></a>总结</h2>
 <blockquote>
-<p>输入一个整数n 1&lt;n&lt;10<sup>9</sup><br>
-输出一个整数<br>
-找出其所有非空子集中所有元素个数之和，然后对10<sup>9</sup>+7取模，输出结果<br>
-例如输入2，有{1}，{2}，{1，2}3个非空子集，所有元素个数之和为4<br>
-输出结果为4</p>
+<p>主要原因还是版本的问题吧</p>
 </blockquote>
-<a id="more"></a>
-<h3 id="思路"><a class="header-anchor" href="#思路"></a>思路</h3>
-<p>用int肯定会超，需要用到BigInteger</p>
-<p>对于输入n，求得所有元素之和为n*2<sup>n-1</sup></p>
-<p>然后再对10<sup>9</sup>+7取模即可</p>
-<h3 id="代码"><a class="header-anchor" href="#代码"></a>代码</h3>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution1</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Scanner sc = <span class="keyword">new</span> Scanner(System.in);</span><br><span class="line">        String n = sc.next();</span><br><span class="line">        BigInteger in = BigInteger.valueOf(Long.parseLong(n));</span><br><span class="line">        BigInteger num = f(in);<span class="comment">//种数</span></span><br><span class="line">        BigInteger x = BigInteger.valueOf(<span class="number">10</span>).pow(<span class="number">9</span>).add(BigInteger.valueOf(<span class="number">7</span>));</span><br><span class="line">        System.out.println(num.mod(x));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> BigInteger <span class="title">f</span><span class="params">(BigInteger n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> n.multiply(BigInteger.valueOf(<span class="number">2</span>).pow(n.intValue()-<span class="number">1</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="第二题"><a class="header-anchor" href="#第二题"></a>第二题</h2>
-<blockquote>
-<p>输入n,m两个整数代表n行m列<br>
-下面输入n行字符串，每个字符串都包含m个字符（只含有’.’,’#’,‘E’,‘S’）<br>
-其中S代表起点，E代表终点，#代表无法通过<br>
-从起点出发，可向左，向右，向上，向下移动一步<br>
-也可按如下中心对称移动，也只算移动一步<br>
-X（i,j）→  X‘（n+1-i,m+1-j）<br>
-求从起点到终点最少需要移动几步</p>
-</blockquote>
-<p>示例输入</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">4 4</span><br><span class="line">#S..</span><br><span class="line">E#..</span><br><span class="line">#...</span><br><span class="line">....</span><br></pre></td></tr></table></figure>
-<p>输出</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">4</span><br></pre></td></tr></table></figure>
-<p>说明<br>
-先中心对称到达（4，3），然后向上一步，向右一步，中心对称到达终点</p>
-<p>第2题我还没做完到时间了😭</p>
-<h2 id="the-end"><a class="header-anchor" href="#the-end"></a>The End</h2>
-<p>㊗️恭喜你看完了这篇文章！</p>
-<p>如果你有什么疑问和想法，可以直接在下面评论，或者给我发邮件</p>
-<p>📧 <a href="mailto:yll1671158@163.com">我的邮箱</a></p>
+<p>我改回maven3.6.1之后就没问题了</p>
 
     </div>
 
@@ -333,7 +360,8 @@ X（i,j）→  X‘（n+1-i,m+1-j）<br>
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/%E7%AC%94%E8%AF%95/" rel="tag"><i class="fa fa-tag"></i> 笔试</a>
+              <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+              <a href="/tags/maven/" rel="tag"><i class="fa fa-tag"></i> maven</a>
           </div>
 
         
@@ -342,13 +370,10 @@ X（i,j）→  X‘（n+1-i,m+1-j）<br>
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/03/14/HashMap%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" rel="prev" title="HashMap源码分析">
-      <i class="fa fa-chevron-left"></i> HashMap源码分析
+    <a href="/2020/05/11/%E5%AD%97%E8%8A%82%E8%B7%B3%E5%8A%A8%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91%E7%AC%94%E8%AF%9520200511/" rel="prev" title="字节跳动后端开发笔试20200511">
+      <i class="fa fa-chevron-left"></i> 字节跳动后端开发笔试20200511
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/04/20/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="next" title="Java多线程">
-      Java多线程 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -409,7 +434,7 @@ X（i,j）→  X‘（n+1-i,m+1-j）<br>
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一题"><span class="nav-number">1.</span> <span class="nav-text">第一题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#思路"><span class="nav-number">1.1.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码"><span class="nav-number">1.2.</span> <span class="nav-text">代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二题"><span class="nav-number">2.</span> <span class="nav-text">第二题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#the-end"><span class="nav-number">3.</span> <span class="nav-text">The End</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题复现"><span class="nav-number">1.</span> <span class="nav-text">问题复现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#尝试解决方法1"><span class="nav-number">2.</span> <span class="nav-text">尝试解决方法1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#尝试解决方法2"><span class="nav-number">3.</span> <span class="nav-text">尝试解决方法2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#尝试解决方法3"><span class="nav-number">4.</span> <span class="nav-text">尝试解决方法3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解法方法4"><span class="nav-number">5.</span> <span class="nav-text">解法方法4</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
