@@ -55,16 +55,16 @@
 <meta property="og:site_name" content="Welcome to bluepyang&#39;s blog">
 <meta property="og:description" content="问题复现 首先新建一个maven项目 在pom.xml中随意导入一个依赖 这里我在阿里云maven仓库中随便找了一个  在项目中导入依赖后报错">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https:&#x2F;&#x2F;www.yangllong.top&#x2F;PicHub&#x2F;jaicore.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;www.yangllong.top&#x2F;PicHub&#x2F;20200623141012.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;www.yangllong.top&#x2F;PicHub&#x2F;20200623141629.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;gitee.com&#x2F;yonglone&#x2F;PicHub&#x2F;raw&#x2F;master&#x2F;jaicore.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;gitee.com&#x2F;yonglone&#x2F;PicHub&#x2F;raw&#x2F;master&#x2F;20200623141012.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;gitee.com&#x2F;yonglone&#x2F;PicHub&#x2F;raw&#x2F;master&#x2F;20200623141629.png">
 <meta property="article:published_time" content="2020-06-23T04:39:52.000Z">
-<meta property="article:modified_time" content="2020-06-27T04:23:01.567Z">
+<meta property="article:modified_time" content="2020-06-27T07:02:22.369Z">
 <meta property="article:author" content="bluepyang">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="maven">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;www.yangllong.top&#x2F;PicHub&#x2F;jaicore.png">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;gitee.com&#x2F;yonglone&#x2F;PicHub&#x2F;raw&#x2F;master&#x2F;jaicore.png">
 
 <link rel="canonical" href="https://www.yangllong.top/2020/06/23/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%A7%E5%9D%91%E2%80%94%E2%80%94%E2%80%94maven%E4%B8%8EJava%E7%89%88%E6%9C%AC%E7%9A%84%E9%97%AE%E9%A2%98/">
 
@@ -249,7 +249,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-27 12:23:01" itemprop="dateModified" datetime="2020-06-27T12:23:01+08:00">2020-06-27</time>
+                <time title="修改时间：2020-06-27 15:02:22" itemprop="dateModified" datetime="2020-06-27T15:02:22+08:00">2020-06-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -313,14 +313,14 @@
 <p>首先新建一个maven项目</p>
 <p>在pom.xml中随意导入一个依赖</p>
 <p>这里我在阿里云maven仓库中随便找了一个</p>
-<p><img src="https://www.yangllong.top/PicHub/jaicore.png" alt="alimaven"></p>
+<p><img src="https://gitee.com/yonglone/PicHub/raw/master/jaicore.png" alt="alimaven"></p>
 <p>在项目中导入依赖后报错</p>
-<p><img src="https://www.yangllong.top/PicHub/20200623141012.png" alt="wrong"></p>
+<p><img src="https://gitee.com/yonglone/PicHub/raw/master/20200623141012.png" alt="wrong"></p>
 <a id="more"></a>
 <p>详细报错信息</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Could not transfer artifact ai.libs:jaicore-planning:pom:0.1.4 from&#x2F;to alimaven (http:&#x2F;&#x2F;maven.aliyun.com&#x2F;nexus&#x2F;content&#x2F;groups&#x2F;public&#x2F;): Transfer failed for http:&#x2F;&#x2F;maven.aliyun.com&#x2F;nexus&#x2F;content&#x2F;groups&#x2F;public&#x2F;ai&#x2F;libs&#x2F;jaicore-planning&#x2F;0.1.4&#x2F;jaicore-planning-0.1.4.pom</span><br></pre></td></tr></table></figure>
 <p>发现在本地maven仓库中只下载了.lastupdated文件</p>
-<p><img src="https://www.yangllong.top/PicHub/20200623141629.png" alt=""></p>
+<p><img src="https://gitee.com/yonglone/PicHub/raw/master/20200623141629.png" alt=""></p>
 <h2 id="尝试解决方法1"><a class="header-anchor" href="#尝试解决方法1"></a>尝试解决方法1</h2>
 <p>查看其他人的解决办法，需要删除此文件重新导入</p>
 <p>这里附上删除所有.lastupdated文件脚本</p>

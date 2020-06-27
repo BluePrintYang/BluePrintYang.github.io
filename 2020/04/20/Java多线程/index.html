@@ -55,14 +55,14 @@
 <meta property="og:site_name" content="Welcome to bluepyang&#39;s blog">
 <meta property="og:description" content="线程的生命周期 新建状态 使用new关键词创建一个线程后，处于新建状态，仅由JVM为其分配内存，并初始化其成员变量 就绪状态 线程对象调用了start()方法之后。Java虚拟机会为其创建方法调用栈和程序计数器，等待调度运行 运行状态 就绪状态的线程获得了cpu，开始执行run()方法的线程执行体 阻塞状态 由于某种原因放弃了cpu使用权 分三种情况  等待阻塞：执行wait()方法，进入等待队列">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https:&#x2F;&#x2F;www.yangllong.top&#x2F;PicHub&#x2F;image-20200420150209648.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;gitee.com&#x2F;yonglone&#x2F;PicHub&#x2F;raw&#x2F;master&#x2F;image-20200420150209648.png">
 <meta property="article:published_time" content="2020-04-20T08:08:03.000Z">
-<meta property="article:modified_time" content="2020-04-20T08:14:56.029Z">
+<meta property="article:modified_time" content="2020-06-27T07:03:08.108Z">
 <meta property="article:author" content="bluepyang">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="多线程">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;www.yangllong.top&#x2F;PicHub&#x2F;image-20200420150209648.png">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;gitee.com&#x2F;yonglone&#x2F;PicHub&#x2F;raw&#x2F;master&#x2F;image-20200420150209648.png">
 
 <link rel="canonical" href="https://www.yangllong.top/2020/04/20/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B/">
 
@@ -239,10 +239,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-04-20 16:08:03 / 修改时间：16:14:56" itemprop="dateCreated datePublished" datetime="2020-04-20T16:08:03+08:00">2020-04-20</time>
+              <time title="创建时间：2020-04-20 16:08:03" itemprop="dateCreated datePublished" datetime="2020-04-20T16:08:03+08:00">2020-04-20</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-27 15:03:08" itemprop="dateModified" datetime="2020-06-27T15:03:08+08:00">2020-06-27</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -330,7 +336,7 @@
 <a id="more"></a>
 </li>
 </ul>
-<p><img src="https://www.yangllong.top/PicHub/image-20200420150209648.png" alt="image-20200420150209648"></p>
+<p><img src="https://gitee.com/yonglone/PicHub/raw/master/image-20200420150209648.png" alt="image-20200420150209648"></p>
 <h2 id="线程创建方式"><a class="header-anchor" href="#线程创建方式"></a>线程创建方式</h2>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//1.继承Thread类</span></span><br><span class="line">        Thread1 thread = <span class="keyword">new</span> Thread1();</span><br><span class="line">        thread.start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//2.实现Runnable接口</span></span><br><span class="line">        Runnable r = () -&gt; &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">                System.out.println(<span class="string">"子线程2的run方法"</span> + i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//实例化线程</span></span><br><span class="line">        Thread t2 = <span class="keyword">new</span> Thread(r);</span><br><span class="line">        t2.start();</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">"主线程启动了"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Thread1</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="comment">//重写run方法</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            System.out.println(<span class="string">"子线程1的run方法"</span> + i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="线程常用方法"><a class="header-anchor" href="#线程常用方法"></a>线程常用方法</h2>
