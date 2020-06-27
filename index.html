@@ -242,7 +242,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-27 12:20:36" itemprop="dateModified" datetime="2020-06-27T12:20:36+08:00">2020-06-27</time>
+                <time title="修改时间：2020-06-27 12:23:01" itemprop="dateModified" datetime="2020-06-27T12:23:01+08:00">2020-06-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -302,41 +302,14 @@
 <p><img src="https://www.yangllong.top/PicHub/jaicore.png" alt="alimaven"></p>
 <p>在项目中导入依赖后报错</p>
 <p><img src="https://www.yangllong.top/PicHub/20200623141012.png" alt="wrong"></p>
-<p>详细报错信息</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Could not transfer artifact ai.libs:jaicore-planning:pom:0.1.4 from&#x2F;to alimaven (http:&#x2F;&#x2F;maven.aliyun.com&#x2F;nexus&#x2F;content&#x2F;groups&#x2F;public&#x2F;): Transfer failed for http:&#x2F;&#x2F;maven.aliyun.com&#x2F;nexus&#x2F;content&#x2F;groups&#x2F;public&#x2F;ai&#x2F;libs&#x2F;jaicore-planning&#x2F;0.1.4&#x2F;jaicore-planning-0.1.4.pom</span><br></pre></td></tr></table></figure>
-<p>发现在本地maven仓库中只下载了.lastupdated文件</p>
-<p><img src="https://www.yangllong.top/PicHub/20200623141629.png" alt=""></p>
-<h2 id="尝试解决方法1"><a class="header-anchor" href="#尝试解决方法1"></a>尝试解决方法1</h2>
-<p>查看其他人的解决办法，需要删除此文件重新导入</p>
-<p>这里附上删除所有.lastupdated文件脚本</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#清理maven仓库.bat</span></span><br><span class="line"><span class="built_in">set</span> REPOSITORY_PATH=D:\maven\repository <span class="comment">#此处修改为本地maven仓库的路径</span></span><br><span class="line">rem 正在搜索...</span><br><span class="line"><span class="keyword">for</span> /f <span class="string">"delims="</span> %%i <span class="keyword">in</span> (<span class="string">'dir /b /s "%REPOSITORY_PATH%\*lastUpdated*"'</span>) <span class="keyword">do</span> (</span><br><span class="line">    del /s /q %%i</span><br><span class="line">)</span><br><span class="line">rem 搜索完毕</span><br><span class="line">pause</span><br></pre></td></tr></table></figure>
-<p>然后这并没有解决我的问题，无论删除多少次，再重新导入依赖，都只会生成.lastupdated文件！！心累😫</p>
-<p>显然，这个方法不能解决问题。</p>
-<h2 id="尝试解决方法2"><a class="header-anchor" href="#尝试解决方法2"></a>尝试解决方法2</h2>
-<p>然后我也曾想是不是阿里云镜像仓库的问题，可能阿里云仓库中没有这个jar包？换个镜像能不能解决问题。现在看来也显然不是，因为我这里就是之间在阿里云仓库中找的依赖。😢</p>
-<h2 id="尝试解决方法3"><a class="header-anchor" href="#尝试解决方法3"></a>尝试解决方法3</h2>
-<p>在terminal中使用<code>mvn install -e</code>命令查看报错信息</p>
-<p>找到关键信息</p>
-<p>？？？</p>
-<p>错误复现的时候，他突然build success？？？</p>
-<p>我无语</p>
-<p>本来应该是这个错误</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed Error</span><br></pre></td></tr></table></figure>
-<p>按照网上方法添加证书的</p>
-<p>从网站上下载证书保存为xxx.cer</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> %JAVA_HOME%\lib\security\cacerts</span><br><span class="line">keytool -import -<span class="built_in">alias</span> xxx -keystore cacerts -file D://xxx.cer</span><br><span class="line">keytool -list -keystore cacerts -<span class="built_in">alias</span> &lt;<span class="built_in">alias</span>&gt;</span><br></pre></td></tr></table></figure>
-<h2 id="解法方法4"><a class="header-anchor" href="#解法方法4"></a>解法方法4</h2>
-<p>本来的解决方案是maven3.6.3需要更换Java版本，我用的openjdk14成功了</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">profile</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">id</span>&gt;</span>jdk-14<span class="tag">&lt;/<span class="name">id</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">activation</span>&gt;</span>    </span><br><span class="line">    	<span class="tag">&lt;<span class="name">activeByDefault</span>&gt;</span>true<span class="tag">&lt;/<span class="name">activeByDefault</span>&gt;</span>    </span><br><span class="line">    	<span class="tag">&lt;<span class="name">jdk</span>&gt;</span>14<span class="tag">&lt;/<span class="name">jdk</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;/<span class="name">activation</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span>    </span><br><span class="line">    	<span class="tag">&lt;<span class="name">maven.compiler.source</span>&gt;</span>14<span class="tag">&lt;/<span class="name">maven.compiler.source</span>&gt;</span>    </span><br><span class="line">    	<span class="tag">&lt;<span class="name">maven.compiler.target</span>&gt;</span>14<span class="tag">&lt;/<span class="name">maven.compiler.target</span>&gt;</span>    </span><br><span class="line">    	<span class="tag">&lt;<span class="name">maven.compiler.compilerVersion</span>&gt;</span>14<span class="tag">&lt;/<span class="name">maven.compiler.compilerVersion</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span>    </span><br><span class="line"><span class="tag">&lt;/<span class="name">profile</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>或者使用旧版本maven 3.6.1可使用Java1.8</p>
-<p>写博客搞着搞着maven3.6.3又用不了了，openjdk14也不行了，换回了3.6.1</p>
-<p>就很看缘分？？</p>
-<h2 id="总结"><a class="header-anchor" href="#总结"></a>总结</h2>
-<blockquote>
-<p>主要原因还是版本的问题吧</p>
-</blockquote>
-<p>我改回maven3.6.1之后就没问题了</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/06/23/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%A7%E5%9D%91%E2%80%94%E2%80%94%E2%80%94maven%E4%B8%8EJava%E7%89%88%E6%9C%AC%E7%9A%84%E9%97%AE%E9%A2%98/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1044,7 +1017,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-14 16:52:36" itemprop="dateModified" datetime="2020-03-14T16:52:36+08:00">2020-03-14</time>
+                <time title="修改时间：2020-06-27 14:08:24" itemprop="dateModified" datetime="2020-06-27T14:08:24+08:00">2020-06-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
